@@ -1,0 +1,21 @@
+{
+  "name": "express-admin-server",
+  "version": "0.0.1",
+  "description": "express-server for admin",
+  "author": "houfei1995@gmail.com",
+  "license": "ISC",
+  "private": true,
+  "keywords": [
+    "express",
+    "mysql"
+  ],
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "morgan": "~1.9.1"
+  }
+}
