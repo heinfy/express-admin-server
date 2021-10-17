@@ -1,9 +1,28 @@
-var express = require('express');
-var router = express.Router();
+'use strict';
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+const homeRouter = require('./home');
+const usersRouter = require('./users');
+const testRouter = require('./test');
 
-module.exports = router;
+const PREFIX = '/api';
+
+const routes = [
+  {
+    key: '/',
+    router: homeRouter,
+  },
+  {
+    key: '/users',
+    router: usersRouter,
+  },
+  {
+    key: '/test',
+    router: testRouter,
+  },
+];
+
+module.exports = (app) => {
+  routes.forEach(function (route) {
+    app.use(`${PREFIX}${route.key}`, route.router);
+  });
+};
