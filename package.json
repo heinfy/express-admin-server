@@ -10,7 +10,9 @@
     "mysql"
   ],
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "dev": "node ./bin/www",
+    "nodemon": "nodemon --exec npm run dev",
+    "start": "cross-env NODE_ENV=development npm run nodemon"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -20,10 +22,13 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
+    "chalk": "^4.1.2",
+    "cross-env": "^7.0.3",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.13",
-    "prettier": "^2.4.1"
+    "prettier": "^2.4.1",
+    "shx": "^0.3.3"
   }
 }

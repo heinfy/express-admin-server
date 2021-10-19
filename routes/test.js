@@ -3,7 +3,6 @@ const testController = require('../controllers/test');
 
 var router = express.Router();
 
-/* GET home page. */
-router.get('/', testController.test);
+router.get('/', testController.getTestList);
 
 module.exports = router;
