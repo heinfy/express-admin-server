@@ -4,18 +4,27 @@ var DBconfig = require('../config/db.config');
 
 var NODE_ENV = process.env.NODE_ENV || 'development';
 
-var db = mysql.createConnection(DBconfig[NODE_ENV]);
+var pool = mysql.createPool(DBconfig[NODE_ENV]);
 
-db.connect(function (err) {
-  if (err) {
-    console.log(chalk.green('error connecting: ' + err.stack));
-    return;
-  }
-  console.log(chalk.green('connected as id ' + db.threadId));
-});
+var query = function (sql) {
+  return new Promise(function (resolve, reject) {
+    pool.getConnection(function (err, connection) {
+      if (err) {
+        console.log(chalk.green('error connecting: ' + err.stack));
+        reject(err);
+        return;
+      }
+      connection.query(sql, function (error, results, fields) {
+        connection.release();
+        if (error) {
+          reject(error);
+          console.log(chalk.green('error query: ' + error));
+          return;
+        }
+        resolve(results);
+      });
+    });
+  });
+};
 
-// db.end(function () {
-//   console.log(chalk.red('数据库断开，请重新连接数据库'));
-// });
-
-module.exports = db;
+module.exports = { pool, query };

@@ -1,4 +1,4 @@
-var db = require('../mysql');
+var { query } = require('../mysql');
 
 class TestService {
   constructor() {}
@@ -8,17 +8,23 @@ class TestService {
    * @param res
    * @returns Object {}
    */
-  getTestList(req, res) {
-    db.query('SELECT * from article;', async function (error, results) {
-      if (error) throw error;
-      console.log('RowDataPacket', results);
-      await res.status(200).json({
+  async getTestList(req, res) {
+    var sql = 'SELECT * from article;';
+    try {
+      var result = await query(sql);
+      console.log(1, result);
+      res.status(200).json({
         statusCode: 1,
         msg: '成功',
-        data: results,
+        data: result,
       });
-    });
-    db.end();
+    } catch (err) {
+      res.status(200).json({
+        statusCode: 2,
+        msg: '失败',
+        data: '' + err,
+      });
+    }
   }
 }
 
