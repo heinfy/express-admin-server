@@ -10,6 +10,9 @@ class TestController {
   getTestList(req, res) {
     testService.getTestList(req, res);
   }
+  create(req, res) {
+    res.send('created a User with es6 class syntax');
+  }
 }
 
-module.exports = new TestController();
+module.exports = TestController;

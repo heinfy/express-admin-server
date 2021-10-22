@@ -1,8 +1,10 @@
-var express = require('express');
-const testController = require('../controller/test');
+const { checkIfAutheticated, verifyFacebookAuth } = require('../middleware');
 
-var router = express.Router();
-
-router.get('/', testController.getTestList);
-
-module.exports = router;
+module.exports = {
+  'GET /test/:id': {
+    path: 'TestController.getTestList',
+    middlewares: [checkIfAutheticated, verifyFacebookAuth],
+  },
+  'POST /test': 'TestController.create',
+  'GET /test': 'TestController.getTestList',
+};

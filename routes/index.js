@@ -1,28 +1,19 @@
 'use strict';
 
-const homeRouter = require('./home');
-const usersRouter = require('./users');
-const testRouter = require('./test');
+const mapRoutes = require('express-routes-mapper');
+const { groupedMiddleware1, groupedMiddleware2 } = require('../middleware');
+
+const testRouterMaps = require('./test');
 
 const PREFIX = '/api';
 
-const routes = [
-  {
-    key: '/',
-    router: homeRouter,
-  },
-  {
-    key: '/users',
-    router: usersRouter,
-  },
-  {
-    key: '/test',
-    router: testRouter,
-  },
-];
-
-module.exports = (app) => {
-  routes.forEach(function (route) {
-    app.use(`${PREFIX}${route.key}`, route.router);
-  });
+const routes = {
+  ...testRouterMaps,
 };
+
+const mappedRoutes = mapRoutes(routes, 'controller/', [
+  groupedMiddleware1,
+  groupedMiddleware2,
+]);
+
+module.exports = (app) => app.use(PREFIX, mappedRoutes);
