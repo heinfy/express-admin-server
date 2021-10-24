@@ -1,7 +1,10 @@
-var { query } = require('../mysql');
+const Define = require('../utils/_define');
+const { query } = require('../mysql');
 
-class TestService {
-  constructor() {}
+class TestService extends Define {
+  constructor() {
+    super();
+  }
   /**
    * 获取测试列表
    * @param req
@@ -9,22 +12,10 @@ class TestService {
    * @returns Object {}
    */
   async getTestList(req, res) {
-    var sql = 'SELECT * from article;';
-    try {
-      var result = await query(sql);
-      console.log(1, result);
-      res.status(200).json({
-        statusCode: 1,
-        msg: '成功',
-        data: result,
-      });
-    } catch (err) {
-      res.status(200).json({
-        statusCode: 2,
-        msg: '失败',
-        data: '' + err,
-      });
-    }
+    const sql = 'SELECT * FROM test;';
+    const { status, result } = await super._invoke(query, sql);
+    const response = super._response(status, result);
+    res.status(status).json(response);
   }
 }
 

@@ -1,6 +1,6 @@
 var testService = require('../service/test');
 
-class TestController {
+module.exports = class TestController {
   constructor() {
     this.getTestList = this.getTestList.bind(this);
   }
@@ -13,6 +13,4 @@ class TestController {
   create(req, res) {
     res.send('created a User with es6 class syntax');
   }
-}
-
-module.exports = TestController;
+};
