@@ -10,6 +10,9 @@ const pool = mysql.createPool(DBconfig[NODE_ENV]);
 // 'UPDATE users SET foo = ?, bar = ?, baz = ? WHERE id = ?', ['a', 'b', 'c', userId]
 // 'INSERT INTO posts SET ?', {},
 // 'DELETE FROM posts WHERE title = "wrong"',
+/**
+ * 连接池封装： https://www.cnblogs.com/enix/p/3654894.html
+ */
 const query = function (...args) {
   return new Promise(function (resolve, reject) {
     pool.getConnection(function (err, connection) {
