@@ -1,10 +1,36 @@
+const { register, update, del, login } = require('../validator/users');
+
 module.exports = {
   // 获取 user 列表
   'GET /users': 'UsersController.users',
   // 新建 user
-  'POST /user': 'UsersController.create',
+  'POST /user': {
+    path: 'UsersController.create',
+    middlewares: [register],
+  },
   // 更新 user
-  'PUT /user': 'UsersController.update',
+  'PUT /user': {
+    path: 'UsersController.update',
+    middlewares: [update],
+  },
   // 删除 user
-  'DELETE /user': 'UsersController.delete',
+  'DELETE /user': {
+    path: 'UsersController.delete',
+    middlewares: [del],
+  },
+  // user 登录
+  'POST /login': {
+    path: 'UsersController.login',
+    middlewares: [login],
+  },
+  // user 登出
+  'POST /logout': {
+    path: 'UsersController.logout',
+    // middlewares: [del],
+  },
+  // 获取当前登录用户
+  'GET /user': {
+    path: 'UsersController.getCurrentUser',
+    // middlewares: [del],
+  },
 };

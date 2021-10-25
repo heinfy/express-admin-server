@@ -13,4 +13,13 @@ module.exports = class UsersController {
   delete(req, res) {
     UsersService.delete(req, res);
   }
+  login(req, res) {
+    UsersService.login(req, res);
+  }
+  logout(req, res) {
+    UsersService.logout(req, res);
+  }
+  getCurrentUser(req, res) {
+    UsersService.getCurrentUser(req, res);
+  }
 };

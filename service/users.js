@@ -1,6 +1,8 @@
 const uid2 = require('uid2');
 const Define = require('../utils/_define');
 const { query } = require('../mysql');
+const jwt = require('../utils/jwt');
+const { jwtSecret } = require('../config/config.default');
 
 class usersService extends Define {
   constructor() {
@@ -93,6 +95,52 @@ class usersService extends Define {
     try {
       await query(sql);
       res.status(200).json(super._response(null));
+    } catch (error) {
+      res.status(400).json(super._response('' + error, 0));
+    }
+  }
+  /**
+   * user 登录
+   */
+  async login(req, res) {
+    try {
+      // 处理请求 中间件会将请求对象挂载到 req 上
+      const user = req.body;
+      delete user.password;
+      const token = await jwt.sign(
+        {
+          userid: user.userid,
+        },
+        jwtSecret,
+        {
+          expiresIn: 60 * 60 * 24, // '365d'
+        }
+      );
+      res.status(200).json(super._response({ token }));
+    } catch (error) {
+      res.status(400).json(super._response('' + error, 0));
+    }
+  }
+  /**
+   * user 登出
+   */
+  async logout(req, res) {
+    const sql = 'SELECT id, userid, email FROM user;';
+    try {
+      let result = await query(sql);
+      res.status(200).json(super._response(result));
+    } catch (error) {
+      res.status(400).json(super._response('' + error, 0));
+    }
+  }
+  /**
+   * 获取当前登录用户
+   */
+  async getCurrentUser(req, res) {
+    const sql = 'SELECT id, userid, email FROM user;';
+    try {
+      let result = await query(sql);
+      res.status(200).json(super._response(result));
     } catch (error) {
       res.status(400).json(super._response('' + error, 0));
     }
