@@ -13,9 +13,12 @@ class TestService extends Define {
    */
   async getTestList(req, res) {
     const sql = 'SELECT * FROM test;';
-    const { status, result } = await super._invoke(query, sql);
-    const response = super._response(status, result);
-    res.status(status).json(response);
+    try {
+      let result = await query(sql);
+      res.status(200).json(super._response(result));
+    } catch (error) {
+      res.status(400).json(super._response('' + error, 0));
+    }
   }
 }
 

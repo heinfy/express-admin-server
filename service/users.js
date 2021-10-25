@@ -1,6 +1,6 @@
 const uid2 = require('uid2');
 const Define = require('../utils/_define');
-const { pool, query } = require('../mysql');
+const { query } = require('../mysql');
 
 class usersService extends Define {
   constructor() {
@@ -13,7 +13,6 @@ class usersService extends Define {
     const sql = 'SELECT id, userid, email FROM user;';
     try {
       let result = await query(sql);
-      console.log(2222, result);
       res.status(200).json(super._response(result));
     } catch (error) {
       res.status(400).json(super._response('' + error, 0));
@@ -51,32 +50,35 @@ class usersService extends Define {
    * 更新 user 姓名、邮箱、密码
    */
   async update(req, res) {
-    const { userid, username = null, email = null, password = null } = req.body;
-    let sqlOptions = [];
-    if (username) {
-      sqlOptions.push({
-        username: username,
-      });
-    }
-    if (email) {
-      sqlOptions.push({
-        email: email,
-      });
-    }
-    if (password) {
-      sqlOptions.push({
-        password: password,
-      });
-    }
-    const fragment = sqlOptions
-      .map((item) => `${Object.keys(item)[0]} = ?`)
-      .join(', ');
-    const sql = `UPDATE user SET ${fragment} WHERE userid = ?`;
-    let sqlArray = sqlOptions.map((item) => Object.values(item)[0]);
-    console.log(sql, sqlArray);
+    const { userid, username = null, email = null } = req.body;
     try {
-      let result = await query(sql, [...sqlArray, userid]);
-      console.log(2222, result);
+      const sql_1 = 'SELECT userid FROM `user` where `email`=?';
+      const data = await query(sql_1, [email]);
+      if (data.length > 0 && data[0].userid !== userid) {
+        res.status(200).json(super._response(null, 0, `${email} 已被注册！`));
+        return;
+      }
+      let sqlOptions = [];
+      if (username) {
+        sqlOptions.push({
+          username: username,
+        });
+      }
+      if (email) {
+        sqlOptions.push({
+          email: email,
+        });
+      }
+      const fragment = sqlOptions
+        .map((item) => `${Object.keys(item)[0]} = ?`)
+        .join(', ');
+      const sql = `UPDATE user SET ${fragment} WHERE userid = ?`,
+        sqlArray = sqlOptions.map((item) => Object.values(item)[0]);
+      await query(sql, [...sqlArray, userid]);
+      let result = {};
+      for (var item of sqlOptions) {
+        result = { ...result, ...item };
+      }
       res.status(200).json(super._response(result));
     } catch (error) {
       res.status(400).json(super._response('' + error, 0));
@@ -86,10 +88,14 @@ class usersService extends Define {
    * 删除 user
    */
   async delete(req, res) {
-    const sql = 'SELECT * from test;';
-    const { status, result } = await query(sql);
-    const response = super._response(status, result);
-    res.status(status).json(response);
+    const { userid } = req.body;
+    const sql = `DELETE FROM user WHERE userid = '${userid}';`;
+    try {
+      await query(sql);
+      res.status(200).json(super._response(null));
+    } catch (error) {
+      res.status(400).json(super._response('' + error, 0));
+    }
   }
 }
 
