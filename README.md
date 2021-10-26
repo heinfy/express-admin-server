@@ -20,7 +20,7 @@ CREATE TABLE `user` (
   `userid` varchar(30) unique NOT NULL COMMENT '用户id',
   `username` varchar(30) NOT NULL COMMENT '用户名称',
   `email` varchar(30) unique NOT NULL COMMENT '用户邮箱',
-  `password` varchar(30) unique NOT NULL COMMENT '密码',
+  `password` varchar(30) NOT NULL COMMENT '密码',
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`, `email`),

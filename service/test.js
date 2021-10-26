@@ -17,7 +17,7 @@ class TestService extends Define {
       let result = await query(sql);
       res.status(200).json(super._response(result));
     } catch (error) {
-      res.status(400).json(super._response('' + error, 0));
+      res.status(200).json(super._response(null, 0, '' + error));
     }
   }
 }

@@ -33,4 +33,6 @@ module.exports = {
     path: 'UsersController.getCurrentUser',
     // middlewares: [del],
   },
+  // 获取公钥
+  'GET /getPublicKey': 'UsersController.getPublicKey',
 };

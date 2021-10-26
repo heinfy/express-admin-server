@@ -22,4 +22,7 @@ module.exports = class UsersController {
   getCurrentUser(req, res) {
     UsersService.getCurrentUser(req, res);
   }
+  getPublicKey(req, res) {
+    UsersService.getPublicKey(req, res);
+  }
 };

@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+const Define = require('../utils/_define');
 
 // parallel processing
 exports = module.exports = (validations) => {
@@ -9,7 +10,9 @@ exports = module.exports = (validations) => {
     if (errors.isEmpty()) {
       return next();
     }
-
-    res.status(400).json({ errors: errors.array() });
+    const errorsArray = errors.array();
+    const _response =  new Define()._response;
+    const result = _response(null, 0, errorsArray[0].msg);
+    res.status(200).json(result);
   };
 };
