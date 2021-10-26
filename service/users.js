@@ -3,6 +3,8 @@ const Define = require('../utils/_define');
 const { _resolve, _readFile } = require('../utils/_node');
 const { query } = require('../mysql');
 const jwt = require('../utils/jwt');
+const md5 = require('../utils/md5');
+const { decrypt } = require('../utils/crypto-node-rsa');
 const { jwtSecret } = require('../config/config.default');
 
 class usersService extends Define {
@@ -26,6 +28,7 @@ class usersService extends Define {
    */
   async create(req, res) {
     const { username, email, password } = req.body;
+    const pwdMd5 = md5(decrypt(password));
     try {
       const sql_1 = 'SELECT * FROM `user` where `email`=?';
       // 判断 email 是否存在
@@ -39,7 +42,7 @@ class usersService extends Define {
         userid: uid2(10),
         username,
         email,
-        password,
+        password: pwdMd5,
       };
       console.log('user', user);
       // 新建用户
@@ -51,7 +54,7 @@ class usersService extends Define {
     }
   }
   /**
-   * 更新 user 姓名、邮箱、密码
+   * 更新 user 姓名、邮箱
    */
   async update(req, res) {
     const { userid, username = null, email = null } = req.body;

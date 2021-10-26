@@ -16,6 +16,10 @@ let publicPem = key.exportKey('pkcs8-public-pem');
 // publicPem = publicPem.replace('-----BEGIN PUBLIC KEY-----', '');
 // publicPem = publicPem.replace('-----END PUBLIC KEY-----', '');
 
+// privatePem = privatePem.replace(/\n/g, '');
+// privatePem = privatePem.replace('-----BEGIN RSA PRIVATE KEY-----', '');
+// privatePem = privatePem.replace('-----END RSA PRIVATE KEY-----', '');
+
 fs.writeFile(_resolve('../pem', 'public.pem'), publicPem, (err) => {
   if (err) throw err;
   console.log(chalk.green('公钥已写入！'));
@@ -25,4 +29,3 @@ fs.writeFile(_resolve('../pem', 'private.pem'), privatePem, (err) => {
   if (err) throw err;
   console.log(chalk.green('私钥已写入！'));
 });
-
