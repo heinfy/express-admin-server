@@ -24,6 +24,5 @@ module.exports = {
   // 获取当前登录用户
   'GET /user': {
     path: 'UsersController.getCurrentUser',
-    // middlewares: [del],
   },
 };

@@ -41,7 +41,6 @@ class usersService extends Define {
         email,
         password: pwdMd5,
       };
-      console.log('user', user);
       // 新建用户
       await query(sql_2, user);
       delete user.password;
@@ -105,9 +104,10 @@ class usersService extends Define {
    * 获取当前登录用户
    */
   async getCurrentUser(req, res) {
-    const sql = 'SELECT id, userid, email FROM user;';
+    const { userid } = req.headers;
+    const sql = 'SELECT id, userid, email FROM `user` where `userid`=?';
     try {
-      let result = await query(sql);
+      let result = await query(sql, [userid]);
       res.status(200).json(super._response(result));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
