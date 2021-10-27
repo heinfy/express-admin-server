@@ -23,11 +23,6 @@ module.exports = {
     path: 'UsersController.login',
     middlewares: [login],
   },
-  // user 登出
-  'POST /logout': {
-    path: 'UsersController.logout',
-    // middlewares: [del],
-  },
   // 获取当前登录用户
   'GET /user': {
     path: 'UsersController.getCurrentUser',

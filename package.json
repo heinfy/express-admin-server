@@ -12,7 +12,8 @@
   "scripts": {
     "dev": "node ./bin/www",
     "nodemon": "nodemon --exec npm run dev",
-    "start": "cross-env NODE_ENV=development npm run nodemon"
+    "start": "cross-env NODE_ENV=development npm run nodemon",
+    "pem": "node ./utils/node-rsa.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -37,8 +38,11 @@
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "express-winston": "^4.2.0",
     "nodemon": "^2.0.13",
     "prettier": "^2.4.1",
-    "shx": "^0.3.3"
+    "shx": "^0.3.3",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.5"
   }
 }

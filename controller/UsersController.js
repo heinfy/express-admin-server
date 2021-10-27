@@ -16,9 +16,6 @@ module.exports = class UsersController {
   login(req, res) {
     UsersService.login(req, res);
   }
-  logout(req, res) {
-    UsersService.logout(req, res);
-  }
   getCurrentUser(req, res) {
     UsersService.getCurrentUser(req, res);
   }

@@ -126,18 +126,6 @@ class usersService extends Define {
     }
   }
   /**
-   * user 登出
-   */
-  async logout(req, res) {
-    const sql = 'SELECT id, userid, email FROM user;';
-    try {
-      let result = await query(sql);
-      res.status(200).json(super._response(result));
-    } catch (error) {
-      res.status(200).json(super._response(null, 0, '' + error));
-    }
-  }
-  /**
    * 获取当前登录用户
    */
   async getCurrentUser(req, res) {
