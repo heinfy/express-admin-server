@@ -13,13 +13,7 @@ module.exports = class UsersController {
   delete(req, res) {
     UsersService.delete(req, res);
   }
-  login(req, res) {
-    UsersService.login(req, res);
-  }
   getCurrentUser(req, res) {
     UsersService.getCurrentUser(req, res);
-  }
-  getPublicKey(req, res) {
-    UsersService.getPublicKey(req, res);
   }
 };

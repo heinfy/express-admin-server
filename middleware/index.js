@@ -1,20 +1,15 @@
-const groupedMiddleware1 = (req, res, next) => {
-  console.log('groupedMiddleware1');
+const groupedMiddleware = (req, res, next) => {
+  console.log('全局中间件');
   next();
 };
 
-const groupedMiddleware2 = (req, res, next) => {
-  console.log('groupedMiddleware2');
+const check = (req, res, next) => {
+  console.log('检验通过的中间件 check');
   next();
 };
 
-const checkIfAutheticated = (req, res, next) => {
-  console.log('authenticated');
-  next();
-};
-
-const verifyFacebookAuth = (req, res, next) => {
-  console.log('unverified');
+const verifyAuth = (req, res, next) => {
+  console.log('校验不通过的中间件 verifyAuth');
   return res.status(400).json({
     status: false,
     message: "Sorry, you aren't authorized on facebook",
@@ -22,8 +17,7 @@ const verifyFacebookAuth = (req, res, next) => {
 };
 
 module.exports = {
-  groupedMiddleware1,
-  groupedMiddleware2,
-  checkIfAutheticated,
-  verifyFacebookAuth,
+  groupedMiddleware,
+  check,
+  verifyAuth,
 };

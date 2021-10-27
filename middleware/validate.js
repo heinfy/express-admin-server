@@ -11,7 +11,7 @@ exports = module.exports = (validations) => {
       return next();
     }
     const errorsArray = errors.array();
-    const _response =  new Define()._response;
+    const _response = new Define()._response;
     const result = _response(null, 0, errorsArray[0].msg);
     res.status(200).json(result);
   };

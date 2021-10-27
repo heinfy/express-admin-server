@@ -1,4 +1,7 @@
-const { register, update, del, login } = require('../validator/users');
+/**
+ * 用户相关的接口
+ */
+const { register, update, del } = require('../validator/users');
 
 module.exports = {
   // 获取 user 列表
@@ -18,16 +21,9 @@ module.exports = {
     path: 'UsersController.delete',
     middlewares: [del],
   },
-  // user 登录
-  'POST /login': {
-    path: 'UsersController.login',
-    middlewares: [login],
-  },
   // 获取当前登录用户
   'GET /user': {
     path: 'UsersController.getCurrentUser',
     // middlewares: [del],
   },
-  // 获取公钥
-  'GET /getPublicKey': 'UsersController.getPublicKey',
 };

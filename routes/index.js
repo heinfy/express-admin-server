@@ -1,24 +1,37 @@
 'use strict';
 
 const mapRoutes = require('express-routes-mapper');
-const { groupedMiddleware1 } = require('../middleware');
+// const { groupedMiddleware } = require('../middleware');
 const { apiRequestLogger } = require('../middleware/logger');
 const auth = require('../middleware/auth');
 
 const testRouterMaps = require('./test');
 const usersRouterMaps = require('./users');
+const baseRouterMaps = require('./base');
 
 const PREFIX = '/api';
 
-const routes = {
+const adminRoutes = {
   ...testRouterMaps,
   ...usersRouterMaps,
 };
 
-const mappedRoutes = mapRoutes(routes, 'controller/', [
+const baseRoutes = {
+  ...baseRouterMaps,
+};
+
+const adminMappedRoutes = mapRoutes(adminRoutes, 'controller/', [
+  // groupedMiddleware,
   auth,
   apiRequestLogger,
-  groupedMiddleware1,
 ]);
 
-module.exports = (app) => app.use(PREFIX, mappedRoutes);
+const baseMappedRoutes = mapRoutes(baseRoutes, 'controller/', [
+  apiRequestLogger,
+  // groupedMiddleware,
+]);
+
+module.exports = (app) => {
+  app.use(PREFIX, baseMappedRoutes);
+  app.use(PREFIX, adminMappedRoutes);
+};

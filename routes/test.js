@@ -1,10 +1,16 @@
-const { checkIfAutheticated, verifyFacebookAuth } = require('../middleware');
+/**
+ * 测试连接接口
+ */
+const { check, verifyAuth } = require('../middleware');
 
 module.exports = {
   'GET /test/:id': {
-    path: 'TestController.getTestList',
-    middlewares: [checkIfAutheticated, verifyFacebookAuth],
+    path: 'TestController.getTest',
+    middlewares: [check],
   },
-  'POST /test': 'TestController.create',
+  'GET /test_no': {
+    path: 'TestController.getTestList',
+    middlewares: [verifyAuth],
+  },
   'GET /test': 'TestController.getTestList',
 };
