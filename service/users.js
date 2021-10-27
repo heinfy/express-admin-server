@@ -101,10 +101,24 @@ class usersService extends Define {
     }
   }
   /**
-   * 获取当前登录用户
+   * 根据 userid 获取用户信息
    */
-  async getCurrentUser(req, res) {
+  async getUserInfoByUserid(req, res) {
+    const { userid } = req.params;
+    const sql = 'SELECT id, userid, email FROM `user` where `userid`=?';
+    try {
+      let result = await query(sql, [userid]);
+      res.status(200).json(super._response(result));
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
+  /**
+   * 根据 token 获取当前登录用户
+   */
+  async getCurrentUserInfo(req, res) {
     const { userid } = req.headers;
+    // TODO 这里将来要获取用户的角色，权限等所有信息
     const sql = 'SELECT id, userid, email FROM `user` where `userid`=?';
     try {
       let result = await query(sql, [userid]);

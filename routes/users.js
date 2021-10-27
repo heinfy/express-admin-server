@@ -21,8 +21,12 @@ module.exports = {
     path: 'UsersController.delete',
     middlewares: [del],
   },
-  // 获取当前登录用户
+  // 获取 userid 获取用户
+  'GET /user/:userid': {
+    path: 'UsersController.getUserInfoByUserid',
+  },
+  // 根据 token 获取当前登录用户
   'GET /user': {
-    path: 'UsersController.getCurrentUser',
+    path: 'UsersController.getCurrentUserInfo',
   },
 };
