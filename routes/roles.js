@@ -1,7 +1,7 @@
 /**
  * 角色相关的接口
  */
-const { create, del } = require('../validator/roles');
+const { create, update, del } = require('../validator/roles');
 
 module.exports = {
   // 获取 role 列表
@@ -14,7 +14,7 @@ module.exports = {
   // 更新 role
   'PUT /role': {
     path: 'RolesController.update',
-    middlewares: [create],
+    middlewares: [update],
   },
   // 删除 role
   'DELETE /role': {
@@ -24,5 +24,13 @@ module.exports = {
   // 根据 roleid 获取 role 信息
   'GET /role/:roleid': {
     path: 'RolesController.getRoleInfoByRoleid',
+  },
+  // 角色设置权限
+  'POST /giveRoleAuths': {
+    path: 'RolesController.giveRoleAuths',
+  },
+  // 角色更新权限
+  'PUT /updateRoleAuths': {
+    path: 'RolesController.updateRoleAuths',
   },
 };

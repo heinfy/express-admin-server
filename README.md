@@ -61,19 +61,36 @@ CREATE TABLE `user_role` (
 SET FOREIGN_KEY_CHECKS = 1;
 ```
 
-### 创建 authority 表
+### 创建 auth 表
 
 ```sql
-CREATE TABLE `authority` (
+CREATE TABLE `auth` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
-  `authorityid` varchar(30) unique NOT NULL COMMENT '权限id',
-  `authorityName` varchar(30) NOT NULL COMMENT '权限名称',
-  `authorityDesc` varchar(30) NOT NULL COMMENT '权限描述',
-  `authoritySort` int(10) NOT NULL COMMENT '权限排序',
+  `authid` varchar(30) unique NOT NULL COMMENT '权限id',
+  `pid` varchar(30) DEFAULT 1 COMMENT '该权限的父id',
+  `type` enum('menu','button') DEFAULT 'button' COMMENT '权限类型',
+  `authName` varchar(30) NOT NULL COMMENT '权限名称',
+  `authDesc` varchar(30) NOT NULL COMMENT '权限描述',
+  `authSort` int(10) NOT NULL COMMENT '权限排序',
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`, `authorityid`),
-  foreign key(authorityid) references authority(authorityid)
+  PRIMARY KEY (`id`, `authid`),
+  foreign key(authid) references authority(authid)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+SET FOREIGN_KEY_CHECKS = 1;
+```
+
+### 创建 role_auth 表
+
+```sql
+CREATE TABLE `role_auth` (
+  `id` int(10) unsigned unique NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `roleid` varchar(30) NOT NULL COMMENT '角色id',
+  `authid` varchar(30) NOT NULL COMMENT '权限id',
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  foreign key(roleid) references user_role(roleid)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 SET FOREIGN_KEY_CHECKS = 1;
 ```

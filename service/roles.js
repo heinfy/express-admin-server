@@ -1,8 +1,6 @@
 const uid2 = require('uid2');
 const Define = require('../utils/_define');
 const { query } = require('../mysql');
-const md5 = require('../utils/md5');
-const { decrypt } = require('../utils/crypto-node-rsa');
 
 class rolesService extends Define {
   constructor() {
@@ -46,32 +44,9 @@ class rolesService extends Define {
   async update(req, res) {
     const { roleid, roleName, roleDesc, roleSort } = req.body;
     try {
-      let sqlOptions = [];
-      if (roleName) {
-        sqlOptions.push({
-          roleName: roleName,
-        });
-      }
-      if (roleDesc) {
-        sqlOptions.push({
-          roleDesc: roleDesc,
-        });
-      }
-      if (roleSort) {
-        sqlOptions.push({
-          roleSort: roleSort,
-        });
-      }
-      const fragment = sqlOptions
-        .map((item) => `${Object.keys(item)[0]} = ?`)
-        .join(', ');
-      const sql = `UPDATE role SET ${fragment} WHERE roleid = ?`,
-        sqlArray = sqlOptions.map((item) => Object.values(item)[0]);
-      await query(sql, [...sqlArray, roleid]);
-      let result = {};
-      for (var item of sqlOptions) {
-        result = { ...result, ...item };
-      }
+      const sql = `UPDATE role SET roleName = ?, roleDesc = ?, roleSort = ? WHERE roleid = ?;`;
+      await query(sql, [roleName, roleDesc, roleSort, roleid]);
+      const result = { roleName, roleDesc, roleSort, roleid };
       res.status(200).json(super._response(result));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
@@ -95,10 +70,38 @@ class rolesService extends Define {
    */
   async getRoleInfoByRoleid(req, res) {
     const { roleid } = req.params;
-    const sql = 'SELECT  roleid, roleName, roleDesc, roleSort, createdAt, updatedAt FROM `role` where `roleid`=?';
+    const sql =
+      'SELECT  roleid, roleName, roleDesc, roleSort, createdAt, updatedAt FROM `role` where `roleid`=?';
     try {
       let result = await query(sql, [roleid]);
       res.status(200).json(super._response(result));
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
+  /**
+   * 给角色设置权限
+   */
+  async giveRoleAuths(req, res) {
+    const { roleid, authids } = req.body;
+    let sql = 'INSERT INTO role_auth (`roleid`, `authid`) VALUES ?';
+    let params = authids.map((authid) => [roleid, authid]);
+    try {
+      await query(sql, [params]);
+      res.status(200).json(super._response(null));
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
+  /**
+   * 更新角色的权限
+   */
+  async updateRoleAuths(req, res) {
+    const { roleid } = req.body;
+    let sql = 'DELETE FROM role_auth WHERE roleid = ?;';
+    try {
+      await query(sql, [roleid]);
+      this.giveRoleAuths(req, res);
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }
