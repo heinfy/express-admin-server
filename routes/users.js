@@ -29,4 +29,12 @@ module.exports = {
   'GET /user': {
     path: 'UsersController.getCurrentUserInfo',
   },
+  // 设置用户角色
+  'POST /giveUserRoles': {
+    path: 'UsersController.giveUserRoles',
+  },
+  // 更新用户角色
+  'PUT /updateUserRoles': {
+    path: 'UsersController.updateUserRoles',
+  },
 };

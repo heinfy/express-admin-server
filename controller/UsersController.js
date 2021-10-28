@@ -19,4 +19,10 @@ module.exports = class UsersController {
   getCurrentUserInfo(req, res) {
     UsersService.getCurrentUserInfo(req, res);
   }
+  giveUserRoles(req, res) {
+    UsersService.giveUserRoles(req, res);
+  }
+  updateUserRoles(req, res) {
+    UsersService.updateUserRoles(req, res);
+  }
 };

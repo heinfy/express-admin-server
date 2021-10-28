@@ -127,6 +127,37 @@ class usersService extends Define {
       res.status(200).json(super._response(null, 0, '' + error));
     }
   }
+  /**
+   * 给用户设置角色
+   */
+  async giveUserRoles(req, res) {
+    const { userid, roleids } = req.body;
+    // https://github.com/mysqljs/mysql/issues/2434
+    // INSERT INTO resource (one, two, ...) VALUES  (?, ?, ?, ?), (?, ?, ?, ?), [...];
+    // INSERT INTO user_role (roleid, userid) VALUES ("BN3Uvludoi", "hjs8vs"), ("BN3Uvludoi", "5ikcWP");
+    // https://blog.csdn.net/lym152898/article/details/78246230
+    let sql = 'INSERT INTO user_role (`roleid`, `userid`) VALUES ?';
+    let params = roleids.map((roleid) => [roleid, userid]);
+    try {
+      await query(sql, [params]);
+      res.status(200).json(super._response(null));
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
+  /**
+   * 更新用户角色
+   */
+  async updateUserRoles(req, res) {
+    const { userid } = req.body;
+    let sql = 'DELETE FROM user_role WHERE userid = ?;';
+    try {
+      await query(sql, [userid]);
+      this.giveUserRoles(req, res);
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
 }
 
 module.exports = new usersService();

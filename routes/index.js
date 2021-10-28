@@ -6,14 +6,16 @@ const { apiRequestLogger } = require('../middleware/logger');
 const auth = require('../middleware/auth');
 
 const testRouterMaps = require('./test');
-const usersRouterMaps = require('./users');
 const baseRouterMaps = require('./base');
+const usersRouterMaps = require('./users');
+const rolesRouterMaps = require('./roles');
 
 const PREFIX = '/api';
 
 const adminRoutes = {
   ...testRouterMaps,
   ...usersRouterMaps,
+  ...rolesRouterMaps,
 };
 
 const baseRoutes = {

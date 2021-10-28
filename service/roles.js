@@ -11,8 +11,9 @@ class rolesService extends Define {
   /**
    * 获取 roles 列表
    */
-  async users(req, res) {
-    const sql = 'SELECT id, userid, email FROM user;';
+  async roles(req, res) {
+    const sql =
+      'SELECT roleid, roleName, roleDesc, roleSort, createdAt, updatedAt FROM role;';
     try {
       let result = await query(sql);
       res.status(200).json(super._response(result));
@@ -24,27 +25,17 @@ class rolesService extends Define {
    * 新建 role
    */
   async create(req, res) {
-    const { username, email, password } = req.body;
-    const pwdMd5 = md5(decrypt(password));
+    const { roleName, roleDesc, roleSort } = req.body;
     try {
-      const sql_1 = 'SELECT * FROM `user` where `email`=?';
-      // 判断 email 是否存在
-      let results = await query(sql_1, [email]);
-      if (results && results.length !== 0) {
-        res.status(200).json(super._response(null, 0, 'email 已注册！'));
-        return;
-      }
-      const sql_2 = 'INSERT INTO user SET ?';
-      let user = {
-        userid: uid2(10),
-        username,
-        email,
-        password: pwdMd5,
+      const sql = 'INSERT INTO role SET ?';
+      let role = {
+        roleid: uid2(6),
+        roleName,
+        roleDesc,
+        roleSort,
       };
-      // 新建用户
-      await query(sql_2, user);
-      delete user.password;
-      res.status(200).json(super._response(user));
+      await query(sql, role);
+      res.status(200).json(super._response(role));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }
@@ -53,31 +44,30 @@ class rolesService extends Define {
    * 更新 role 名称、描述、排序
    */
   async update(req, res) {
-    const { userid, username = null, email = null } = req.body;
+    const { roleid, roleName, roleDesc, roleSort } = req.body;
     try {
-      const sql_1 = 'SELECT userid FROM `user` where `email`=?';
-      const data = await query(sql_1, [email]);
-      if (data.length > 0 && data[0].userid !== userid) {
-        res.status(200).json(super._response(null, 0, `${email} 已被注册！`));
-        return;
-      }
       let sqlOptions = [];
-      if (username) {
+      if (roleName) {
         sqlOptions.push({
-          username: username,
+          roleName: roleName,
         });
       }
-      if (email) {
+      if (roleDesc) {
         sqlOptions.push({
-          email: email,
+          roleDesc: roleDesc,
+        });
+      }
+      if (roleSort) {
+        sqlOptions.push({
+          roleSort: roleSort,
         });
       }
       const fragment = sqlOptions
         .map((item) => `${Object.keys(item)[0]} = ?`)
         .join(', ');
-      const sql = `UPDATE user SET ${fragment} WHERE userid = ?`,
+      const sql = `UPDATE role SET ${fragment} WHERE roleid = ?`,
         sqlArray = sqlOptions.map((item) => Object.values(item)[0]);
-      await query(sql, [...sqlArray, userid]);
+      await query(sql, [...sqlArray, roleid]);
       let result = {};
       for (var item of sqlOptions) {
         result = { ...result, ...item };
@@ -91,8 +81,8 @@ class rolesService extends Define {
    * 根据 roleid 删除 role
    */
   async delete(req, res) {
-    const { userid } = req.body;
-    const sql = `DELETE FROM user WHERE userid = '${userid}';`;
+    const { roleid } = req.body;
+    const sql = `DELETE FROM role WHERE roleid = '${roleid}';`;
     try {
       await query(sql);
       res.status(200).json(super._response(null));
@@ -104,10 +94,10 @@ class rolesService extends Define {
    * 根据 roleid 获取角色信息
    */
   async getRoleInfoByRoleid(req, res) {
-    const { userid } = req.params;
-    const sql = 'SELECT id, userid, email FROM `user` where `userid`=?';
+    const { roleid } = req.params;
+    const sql = 'SELECT  roleid, roleName, roleDesc, roleSort, createdAt, updatedAt FROM `role` where `roleid`=?';
     try {
-      let result = await query(sql, [userid]);
+      let result = await query(sql, [roleid]);
       res.status(200).json(super._response(result));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
