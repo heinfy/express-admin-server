@@ -158,6 +158,46 @@ class usersService extends Define {
       res.status(200).json(super._response(null, 0, '' + error));
     }
   }
+  /**
+   * 根据 userid 获取用户角色
+   */
+  async getRolesByUserid(req, res) {
+    const { userid } = req.params;
+    let sql =
+      'SELECT r.roleid, r.roleName FROM user_role u, role r WHERE u.userid = ? and u.roleid = r.roleid;';
+    try {
+      let result = await query(sql, [userid]);
+      console.log('result', result);
+      res.status(200).json(super._response(result));
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
+  /**
+   * 根据 userid 获取用户权限
+   */
+  async getAuthsByUserid(req, res) {
+    const { userid } = req.params;
+    //  select * from user,user_role,authority, authority_role WHERE user.id = user_role.user_id and user_role.role_id = authority_role.role_id and authority_role.authority_id = authority.id WHERE user.id = '';
+    let sql =
+      'SELECT a.authid, a.authName, a.type FROM user_role u, role_auth r, auth a WHERE u.userid = ? and u.roleid = r.roleid and r.authid = a.authid;';
+    try {
+      let result = await query(sql, [userid]);
+      /**
+       * js中数组对象去重:
+       * https://www.jb51.net/article/154887.htm
+       * https://www.jianshu.com/p/7c12cbaa817b
+       */
+      let obj = {};
+      result = result.reduce(function (item, next) {
+        obj[next.authid] ? '' : (obj[next.authid] = true && item.push(next));
+        return item;
+      }, []);
+      res.status(200).json(super._response(result));
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
 }
 
 module.exports = new usersService();

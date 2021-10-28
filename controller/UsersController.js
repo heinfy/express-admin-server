@@ -25,4 +25,10 @@ module.exports = class UsersController {
   updateUserRoles(req, res) {
     UsersService.updateUserRoles(req, res);
   }
+  getRolesByUserid(req, res) {
+    UsersService.getRolesByUserid(req, res);
+  }
+  getAuthsByUserid(req, res) {
+    UsersService.getAuthsByUserid(req, res);
+  }
 };

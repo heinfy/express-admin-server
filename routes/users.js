@@ -21,11 +21,11 @@ module.exports = {
     path: 'UsersController.delete',
     middlewares: [del],
   },
-  // 获取 userid 获取用户
+  // 根据 userid 获取用户
   'GET /user/:userid': {
     path: 'UsersController.getUserInfoByUserid',
   },
-  // 根据 token 获取当前登录用户
+  // 根据 token 获取当前登录用户信息
   'GET /user': {
     path: 'UsersController.getCurrentUserInfo',
   },
@@ -36,5 +36,13 @@ module.exports = {
   // 更新用户角色
   'PUT /updateUserRoles': {
     path: 'UsersController.updateUserRoles',
+  },
+  // 根据 userid 获取用户角色
+  'GET /getRolesByUserid/:userid': {
+    path: 'UsersController.getRolesByUserid',
+  },
+  // 根据 userid 获取用户权限
+  'GET /getAuthsByUserid/:userid': {
+    path: 'UsersController.getAuthsByUserid',
   },
 };
