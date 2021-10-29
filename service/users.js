@@ -167,7 +167,6 @@ class usersService extends Define {
       'SELECT r.roleid, r.roleName FROM user_role u, role r WHERE u.userid = ? and u.roleid = r.roleid;';
     try {
       let result = await query(sql, [userid]);
-      console.log('result', result);
       res.status(200).json(super._response(result));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
@@ -191,6 +190,34 @@ class usersService extends Define {
       let obj = {};
       result = result.reduce(function (item, next) {
         obj[next.authid] ? '' : (obj[next.authid] = true && item.push(next));
+        return item;
+      }, []);
+      res.status(200).json(super._response(result));
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
+  /**
+   * 根据 userid 获取用户路由
+   */
+  async getRoutesByUserid(req, res) {
+    const { userid } = req.params;
+    try {
+      // 获取用户角色
+      let sql_1 =
+        'SELECT r.roleid FROM user_role u, role r WHERE u.userid = ? and u.roleid = r.roleid;';
+      let re = await query(sql_1, [userid]);
+      if (re.length === 0) {
+        res.status(200).json(super._response(null, 0, '该用户没有设置角色'));
+        return;
+      }
+      const routeids = re.map((route) => `'${route.roleid}'`).join(',');
+      // 根据用户角色获取路由
+      let sql_2 = `SELECT ru.routeid, ru.routeName, ru.icon, ru.routeSort FROM role_auth r, auth_route a, route ru WHERE r.roleid in (${routeids}) and r.authid = a.authid and a.routeid = ru.routeid;`;
+      let result = await query(sql_2);
+      let obj = {};
+      result = result.reduce(function (item, next) {
+        obj[next.routeid] ? '' : (obj[next.routeid] = true && item.push(next));
         return item;
       }, []);
       res.status(200).json(super._response(result));

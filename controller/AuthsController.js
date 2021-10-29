@@ -16,4 +16,10 @@ module.exports = class AuthsController {
   getAuthInfoByAuthid(req, res) {
     AuthsService.getAuthInfoByAuthid(req, res);
   }
+  giveAuthRoute(req, res) {
+    AuthsService.giveAuthRoute(req, res);
+  }
+  updateAuthRoute(req, res) {
+    AuthsService.updateAuthRoute(req, res);
+  }
 };

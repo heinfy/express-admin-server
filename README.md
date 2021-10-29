@@ -101,7 +101,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE `route` (
   `id` int(10) unsigned unique NOT NULL AUTO_INCREMENT COMMENT '自增id',
   `routeid` varchar(30) unique NOT NULL COMMENT '路由id',
-  `route` varchar(128) unique NOT NULL COMMENT '路由',
+  `route` varchar(128) NOT NULL COMMENT '路由',
   `routeName` varchar(30) NOT NULL COMMENT '路由名称',
   `icon` varchar(64) DEFAULT null COMMENT '路由icon',
   `routeSort` int(10) NOT NULL COMMENT '路由排序',
@@ -123,7 +123,7 @@ CREATE TABLE `auth_route` (
   `createdAt` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  foreign key(authid) references user_role(authid)
+  foreign key(authid) references auth_route(authid)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 SET FOREIGN_KEY_CHECKS = 1;
 ```

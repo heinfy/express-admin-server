@@ -45,4 +45,8 @@ module.exports = {
   'GET /getAuthsByUserid/:userid': {
     path: 'UsersController.getAuthsByUserid',
   },
+  // 根据 userid 获取用户路由
+  'GET /getRoutesByUserid/:userid': {
+    path: 'UsersController.getRoutesByUserid',
+  },
 };

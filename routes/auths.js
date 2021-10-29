@@ -1,7 +1,7 @@
 /**
  * 权限相关的接口
  */
-const { create, update, del } = require('../validator/auths');
+const { create, update, del, isMenu } = require('../validator/auths');
 
 module.exports = {
   // 获取权限列表
@@ -24,5 +24,15 @@ module.exports = {
   // 根据 权限id 获取权限信息
   'GET /auth/:authid': {
     path: 'AuthsController.getAuthInfoByAuthid',
+  },
+  // 给 menu 类型的权限添加对应的路由
+  'POST /giveAuthRoute': {
+    path: 'AuthsController.giveAuthRoute',
+    middlewares: [isMenu],
+  },
+  // 更新 menu 类型的权限的路由
+  'PUT /updateAuthRoute': {
+    path: 'AuthsController.updateAuthRoute',
+    middlewares: [isMenu],
   },
 };

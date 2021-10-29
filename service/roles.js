@@ -106,6 +106,20 @@ class rolesService extends Define {
       res.status(200).json(super._response(null, 0, '' + error));
     }
   }
+  /**
+   * 根据 roleid 获取权限列表
+   */
+  async getAuthsByRoleid(req, res) {
+    const { roleid } = req.params;
+    const sql =
+      'SELECT r.roleid, r.authid, a.authName, a.type FROM role_auth r, auth a WHERE r.roleid = ? and r.authid = a.authid;';
+    try {
+      let result = await query(sql, [roleid]);
+      res.status(200).json(super._response(result));
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
 }
 
 module.exports = new rolesService();

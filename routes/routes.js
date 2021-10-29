@@ -21,7 +21,7 @@ module.exports = {
     path: 'RoutesController.delete',
     middlewares: [del],
   },
-  // 根据 routeid 获取路由信息
+  // 根据 路由id 获取路由信息
   'GET /route/:routeid': {
     path: 'RoutesController.getAuthInfoByAuthid',
   },

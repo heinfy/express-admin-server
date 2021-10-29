@@ -33,4 +33,8 @@ module.exports = {
   'PUT /updateRoleAuths': {
     path: 'RolesController.updateRoleAuths',
   },
+  // 根据 roleid 获取权限列表
+  'GET /getAuthsByRoleid/:roleid': {
+    path: 'RolesController.getAuthsByRoleid',
+  },
 };

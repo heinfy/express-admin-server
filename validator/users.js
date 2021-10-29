@@ -37,7 +37,6 @@ exports.login = [
     body('email').custom(async (email, { req }) => {
       try {
         const sql = 'SELECT email, password, userid FROM user WHERE email = ?';
-        query(sql, [email]);
         let result = await query(sql, [email]);
         if (result.length === 0) {
           return Promise.reject('用户不存在');

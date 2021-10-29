@@ -27,7 +27,7 @@ class RoutesService extends Define {
     try {
       const sql = 'INSERT INTO route SET ?';
       let r = {
-        routeid: uid2(5),
+        routeid: uid2(4),
         route,
         routeName,
         icon,
@@ -73,7 +73,7 @@ class RoutesService extends Define {
   async getAuthInfoByAuthid(req, res) {
     const { routeid } = req.params;
     const sql =
-      'SELECT routeid, pid, type, authName, authDesc, authSort, createdAt, updatedAt FROM `route` where `routeid`=?;';
+      'SELECT routeid, route, routeName, icon, routeSort, createdAt, updatedAt FROM `route` where `routeid`=?;';
     try {
       let result = await query(sql, [routeid]);
       res.status(200).json(super._response(result));

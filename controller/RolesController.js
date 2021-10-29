@@ -22,4 +22,7 @@ module.exports = class UsersController {
   updateRoleAuths(req, res) {
     RolesService.updateRoleAuths(req, res);
   }
+  getAuthsByRoleid(req, res) {
+    RolesService.getAuthsByRoleid(req, res);
+  }
 };

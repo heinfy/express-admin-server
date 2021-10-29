@@ -82,6 +82,44 @@ class AuthsService extends Define {
       res.status(200).json(super._response(null, 0, '' + error));
     }
   }
+  /**
+   * 给 menu 类型的权限添加对应的路由
+   */
+  async giveAuthRoute(req, res) {
+    const { authid, routeid } = req.body;
+    try {
+      // 检查本次插入的权限是否已经存在在数据库中
+      const sql_1 = 'SELECT * FROM `auth_route` where `authid`=?;';
+      let re = await query(sql_1, [authid]);
+      if (re.length === 1) {
+        res.status(200).json(super._response(null, 0, '该权限已添加过路由'));
+        return;
+      }
+      const sql_2 = 'INSERT INTO `auth_route` SET ?';
+      let result = {
+        authid,
+        routeid,
+      };
+      // 将本次权限-路由插入数据库
+      await query(sql_2, [result]);
+      res.status(200).json(super._response(result));
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
+  /**
+   * 更新 menu 类型的权限的路由
+   */
+  async updateAuthRoute(req, res) {
+    const { authid, routeid } = req.params;
+    const sql = 'UPDATE auth_route SET routeid = ? WHERE authid = ?;';
+    try {
+      await query(sql, [routeid, authid]);
+      res.status(200).json(super._response(null));
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
 }
 
 module.exports = new AuthsService();

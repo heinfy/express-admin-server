@@ -31,4 +31,7 @@ module.exports = class UsersController {
   getAuthsByUserid(req, res) {
     UsersService.getAuthsByUserid(req, res);
   }
+  getRoutesByUserid(req, res) {
+    UsersService.getRoutesByUserid(req, res);
+  }
 };
