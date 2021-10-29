@@ -108,7 +108,7 @@ class usersService extends Define {
     const sql = 'SELECT id, userid, email FROM `user` where `userid`=?';
     try {
       let result = await query(sql, [userid]);
-      res.status(200).json(super._response(result));
+      res.status(200).json(super._response(result[0]));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }
@@ -122,7 +122,7 @@ class usersService extends Define {
     const sql = 'SELECT id, userid, email FROM `user` where `userid`=?';
     try {
       let result = await query(sql, [userid]);
-      res.status(200).json(super._response(result));
+      res.status(200).json(super._response(result[0]));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }
@@ -213,7 +213,7 @@ class usersService extends Define {
       }
       const routeids = re.map((route) => `'${route.roleid}'`).join(',');
       // 根据用户角色获取路由
-      let sql_2 = `SELECT ru.routeid, ru.routeName, ru.icon, ru.routeSort FROM role_auth r, auth_route a, route ru WHERE r.roleid in (${routeids}) and r.authid = a.authid and a.routeid = ru.routeid;`;
+      let sql_2 = `SELECT ru.routeid, ru.route, ru.routeName, ru.icon, ru.routeSort FROM role_auth r, auth_route a, route ru WHERE r.roleid in (${routeids}) and r.authid = a.authid and a.routeid = ru.routeid;`;
       let result = await query(sql_2);
       let obj = {};
       result = result.reduce(function (item, next) {

@@ -1,7 +1,7 @@
 /**
  * 用户相关的接口
  */
-const { register, update, del } = require('../validator/users');
+const { register, update, del, isRightUserid } = require('../validator/users');
 
 module.exports = {
   // 获取 user 列表
@@ -24,6 +24,7 @@ module.exports = {
   // 根据 userid 获取用户
   'GET /user/:userid': {
     path: 'UsersController.getUserInfoByUserid',
+    middlewares: [isRightUserid],
   },
   // 根据 token 获取当前登录用户信息
   'GET /user': {
@@ -40,13 +41,16 @@ module.exports = {
   // 根据 userid 获取用户角色
   'GET /getRolesByUserid/:userid': {
     path: 'UsersController.getRolesByUserid',
+    middlewares: [isRightUserid],
   },
   // 根据 userid 获取用户权限
   'GET /getAuthsByUserid/:userid': {
     path: 'UsersController.getAuthsByUserid',
+    middlewares: [isRightUserid],
   },
   // 根据 userid 获取用户路由
   'GET /getRoutesByUserid/:userid': {
     path: 'UsersController.getRoutesByUserid',
+    middlewares: [isRightUserid],
   },
 };

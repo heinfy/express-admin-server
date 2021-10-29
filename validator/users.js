@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const { query } = require('../mysql');
 const { decrypt } = require('../utils/crypto-node-rsa');
 const md5 = require('../utils/md5');
@@ -54,6 +54,24 @@ exports.login = [
     body('password').custom(async (password, { req }) => {
       if (md5(decrypt(password)) !== req.user.password) {
         return Promise.reject('密码错误');
+      }
+    }),
+  ]),
+];
+
+exports.isRightUserid = [
+  validator([
+    param('userid').custom(async (userid) => {
+      try {
+        const sql = 'SELECT * FROM user WHERE userid = ?';
+        let result = await query(sql, [userid]);
+        if (result.length === 0) {
+          return Promise.reject('用户不存在');
+        }
+      } catch (error) {
+        const _response = new Define()._response;
+        const result = _response(null, 0, error + '');
+        res.status(200).json(result);
       }
     }),
   ]),
