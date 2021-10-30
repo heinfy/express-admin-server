@@ -53,4 +53,8 @@ module.exports = {
     path: 'UsersController.getRoutesByUserid',
     middlewares: [isRightUserid],
   },
+  // 获取访问日志列表
+  'GET /getLogList': {
+    path: 'UsersController.getLogList',
+  },
 };

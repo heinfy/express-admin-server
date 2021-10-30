@@ -1,4 +1,5 @@
-var UsersService = require('../service/users');
+const UsersService = require('../service/users');
+const LogController = require('../mongo/controller/log');
 
 module.exports = class UsersController {
   users(req, res) {
@@ -33,5 +34,8 @@ module.exports = class UsersController {
   }
   getRoutesByUserid(req, res) {
     UsersService.getRoutesByUserid(req, res);
+  }
+  getLogList(req, res) {
+    LogController.getLogList(req, res);
   }
 };

@@ -2,6 +2,7 @@
 
 const mapRoutes = require('express-routes-mapper');
 // const { groupedMiddleware } = require('../middleware');
+const LogController = require('../mongo/controller/log');
 const { apiRequestLogger } = require('../middleware/logger');
 const auth = require('../middleware/auth');
 
@@ -29,6 +30,7 @@ const baseRoutes = {
 const adminMappedRoutes = mapRoutes(adminRoutes, 'controller/', [
   // groupedMiddleware,
   auth,
+  LogController.createLog,
   apiRequestLogger,
 ]);
 
