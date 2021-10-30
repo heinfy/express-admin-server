@@ -26,8 +26,8 @@ class usersService extends Define {
     // 根据 userid 获取用户权限
     this.SQL_USERAUTH =
       'SELECT a.authid, a.authName, a.type FROM user_role u, role_auth r, auth a WHERE u.userid = ? and u.roleid = r.roleid and r.authid = a.authid;';
-    // 根据 userid 获取用户路由
-    this.SQL_USERROUTE = `SELECT ru.routeid, ru.route, ru.routeName, ru.icon, ru.routeSort FROM user_role ur, role_auth r, auth_route a, route ru WHERE ur.userid = ? and ur.roleid = r.roleid and r.authid = a.authid and a.routeid = ru.routeid;`;
+    // 根据 userid 获取用户路由 菜单层级是有权限层级确定
+    this.SQL_USERROUTE = `SELECT auth.pid, auth.authid, ru.routeid, ru.routeSort ,ru.route, ru.routeName, ru.icon, ru.routeSort FROM user_role ur, role_auth r, auth, auth_route a, route ru WHERE ur.userid = ? and ur.roleid = r.roleid and r.authid = auth.authid and r.authid = a.authid and a.routeid = ru.routeid;`;
   }
   /**
    * 获取 user 列表
