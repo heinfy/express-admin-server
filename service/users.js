@@ -7,14 +7,34 @@ const { decrypt } = require('../utils/crypto-node-rsa');
 class usersService extends Define {
   constructor() {
     super();
+    // 获取 user 列表
+    this.SQL_USERLIST = 'SELECT id, userid, email FROM user;';
+    // 根据 emial 获取 user
+    this.SQL_USER_EMAIL = 'SELECT * FROM `user` where `email`=?';
+    // 根据邮箱获取 userid
+    this.SQL_USERID_EMAIL = 'SELECT userid FROM `user` where `email`=?';
+    // 新建用户
+    this.SQL_USER = 'INSERT INTO user SET ?';
+    // 给用户设置角色
+    this.SQL_USER_ROLE = 'INSERT INTO user_role (`roleid`, `userid`) VALUES ?';
+    // 根据 userid 获取用户信息
+    this.SQL_USERINFO =
+      'SELECT userid, username, email FROM `user` where `userid`=?';
+    // 根据 userid 获取用户角色
+    this.SQL_USERROLE =
+      'SELECT r.roleid, r.roleName FROM user_role u, role r WHERE u.userid = ? and u.roleid = r.roleid;';
+    // 根据 userid 获取用户权限
+    this.SQL_USERAUTH =
+      'SELECT a.authid, a.authName, a.type FROM user_role u, role_auth r, auth a WHERE u.userid = ? and u.roleid = r.roleid and r.authid = a.authid;';
+    // 根据 userid 获取用户路由
+    this.SQL_USERROUTE = `SELECT ru.routeid, ru.route, ru.routeName, ru.icon, ru.routeSort FROM user_role ur, role_auth r, auth_route a, route ru WHERE ur.userid = ? and ur.roleid = r.roleid and r.authid = a.authid and a.routeid = ru.routeid;`;
   }
   /**
    * 获取 user 列表
    */
   async users(req, res) {
-    const sql = 'SELECT id, userid, email FROM user;';
     try {
-      let result = await query(sql);
+      let result = await query(this.SQL_USERLIST);
       res.status(200).json(super._response(result));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
@@ -24,27 +44,30 @@ class usersService extends Define {
    * 新建 user
    */
   async create(req, res) {
-    const { username, email, password } = req.body;
+    const { username, email, password, roleids = undefined } = req.body;
     const pwdMd5 = md5(decrypt(password));
     try {
-      const sql_1 = 'SELECT * FROM `user` where `email`=?';
-      // 判断 email 是否存在
-      let results = await query(sql_1, [email]);
+      let results = await query(this.SQL_USER_EMAIL, [email]);
       if (results && results.length !== 0) {
         res.status(200).json(super._response(null, 0, 'email 已注册！'));
         return;
       }
-      const sql_2 = 'INSERT INTO user SET ?';
+      const userid = uid2(10);
       let user = {
-        userid: uid2(10),
+        userid,
         username,
         email,
         password: pwdMd5,
       };
       // 新建用户
-      await query(sql_2, user);
-      delete user.password;
-      res.status(200).json(super._response(user));
+      await query(this.SQL_USER, user);
+      // 赋予角色 如果 roleids 不存在，则自动赋予基础角色
+      const params = (roleids && roleids.map((roleid) => [roleid, userid])) || [
+        'g_TpK5',
+        userid,
+      ];
+      await query(this.SQL_USER_ROLE, [[params]]);
+      res.status(200).json(super._response(null));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }
@@ -55,8 +78,7 @@ class usersService extends Define {
   async update(req, res) {
     const { userid, username = null, email = null } = req.body;
     try {
-      const sql_1 = 'SELECT userid FROM `user` where `email`=?';
-      const data = await query(sql_1, [email]);
+      const data = await query(this.SQL_USERID_EMAIL, [email]);
       if (data.length > 0 && data[0].userid !== userid) {
         res.status(200).json(super._response(null, 0, `${email} 已被注册！`));
         return;
@@ -105,24 +127,35 @@ class usersService extends Define {
    */
   async getUserInfoByUserid(req, res) {
     const { userid } = req.params;
-    const sql = 'SELECT id, userid, email FROM `user` where `userid`=?';
-    try {
-      let result = await query(sql, [userid]);
-      res.status(200).json(super._response(result[0]));
-    } catch (error) {
-      res.status(200).json(super._response(null, 0, '' + error));
-    }
+    this.getUserInfo(userid, res);
   }
   /**
    * 根据 token 获取当前登录用户
    */
   async getCurrentUserInfo(req, res) {
     const { userid } = req.headers;
-    // TODO 这里将来要获取用户的角色，权限等所有信息
-    const sql = 'SELECT id, userid, email FROM `user` where `userid`=?';
+    this.getUserInfo(userid, res);
+  }
+  /**
+   * 获取用户信息
+   */
+  async getUserInfo(userid, res) {
     try {
-      let result = await query(sql, [userid]);
-      res.status(200).json(super._response(result[0]));
+      // 获取用户信息
+      const info = await query(this.SQL_USERINFO, [userid]);
+      // 获取用户角色
+      const roles = await query(this.SQL_USERROLE, [userid]);
+      // 获取用户权限
+      const auths = await query(this.SQL_USERAUTH, [userid]);
+      // 获取用户路由
+      const routes = await query(this.SQL_USERROUTE, [userid]);
+      const userInfo = {
+        info: info[0],
+        roles: roles,
+        auths: auths,
+        routes: routes,
+      };
+      res.status(200).json(super._response(userInfo));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }
@@ -136,10 +169,9 @@ class usersService extends Define {
     // INSERT INTO resource (one, two, ...) VALUES  (?, ?, ?, ?), (?, ?, ?, ?), [...];
     // INSERT INTO user_role (roleid, userid) VALUES ("BN3Uvludoi", "hjs8vs"), ("BN3Uvludoi", "5ikcWP");
     // https://blog.csdn.net/lym152898/article/details/78246230
-    let sql = 'INSERT INTO user_role (`roleid`, `userid`) VALUES ?';
-    let params = roleids.map((roleid) => [roleid, userid]);
+    const params = roleids.map((roleid) => [roleid, userid]);
     try {
-      await query(sql, [params]);
+      await query(this.SQL_USER_ROLE, [params]);
       res.status(200).json(super._response(null));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
@@ -150,9 +182,11 @@ class usersService extends Define {
    */
   async updateUserRoles(req, res) {
     const { userid } = req.body;
-    let sql = 'DELETE FROM user_role WHERE userid = ?;';
     try {
+      // 删除原来的用户角色
+      const sql = 'DELETE FROM user_role WHERE userid = ?;';
       await query(sql, [userid]);
+      // 添加新的用户角色
       this.giveUserRoles(req, res);
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
@@ -163,10 +197,8 @@ class usersService extends Define {
    */
   async getRolesByUserid(req, res) {
     const { userid } = req.params;
-    let sql =
-      'SELECT r.roleid, r.roleName FROM user_role u, role r WHERE u.userid = ? and u.roleid = r.roleid;';
     try {
-      let result = await query(sql, [userid]);
+      let result = await query(this.SQL_USERROLE, [userid]);
       res.status(200).json(super._response(result));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
@@ -177,11 +209,8 @@ class usersService extends Define {
    */
   async getAuthsByUserid(req, res) {
     const { userid } = req.params;
-    //  select * from user,user_role,authority, authority_role WHERE user.id = user_role.user_id and user_role.role_id = authority_role.role_id and authority_role.authority_id = authority.id WHERE user.id = '';
-    let sql =
-      'SELECT a.authid, a.authName, a.type FROM user_role u, role_auth r, auth a WHERE u.userid = ? and u.roleid = r.roleid and r.authid = a.authid;';
     try {
-      let result = await query(sql, [userid]);
+      let result = await query(this.SQL_USERAUTH, [userid]);
       /**
        * js中数组对象去重:
        * https://www.jb51.net/article/154887.htm
@@ -204,17 +233,10 @@ class usersService extends Define {
     const { userid } = req.params;
     try {
       // 获取用户角色
-      let sql_1 =
-        'SELECT r.roleid FROM user_role u, role r WHERE u.userid = ? and u.roleid = r.roleid;';
-      let re = await query(sql_1, [userid]);
-      if (re.length === 0) {
-        res.status(200).json(super._response(null, 0, '该用户没有设置角色'));
-        return;
-      }
-      const routeids = re.map((route) => `'${route.roleid}'`).join(',');
-      // 根据用户角色获取路由
-      let sql_2 = `SELECT ru.routeid, ru.route, ru.routeName, ru.icon, ru.routeSort FROM role_auth r, auth_route a, route ru WHERE r.roleid in (${routeids}) and r.authid = a.authid and a.routeid = ru.routeid;`;
-      let result = await query(sql_2);
+      // let re = await query(this.SQL_USERROLE, [userid]);
+      // const routeids = re.map((route) => `'${route.roleid}'`).join(',');
+      // const sql = `SELECT ru.routeid, ru.route, ru.routeName, ru.icon, ru.routeSort FROM role_auth r, auth_route a, route ru WHERE r.roleid in (${routeids}) and r.authid = a.authid and a.routeid = ru.routeid;`;
+      let result = await query(this.SQL_USERROUTE, [userid]);
       let obj = {};
       result = result.reduce(function (item, next) {
         obj[next.routeid] ? '' : (obj[next.routeid] = true && item.push(next));

@@ -59,8 +59,16 @@ class RoutesService extends Define {
    */
   async delete(req, res) {
     const { routeid } = req.body;
-    const sql = `DELETE FROM route WHERE routeid = '${routeid}';`;
     try {
+      const sql_1 = `SELECT * FROM auth_route WHERE routeid = ?;`;
+      const rt = await query(sql_1, [routeid]);
+      if (rt.length > 0) {
+        res
+          .status(200)
+          .json(super._response(null, 0, '该路由已被权限使用，无法删除'));
+        return;
+      }
+      const sql = `DELETE FROM route WHERE routeid = '${routeid}';`;
       await query(sql);
       res.status(200).json(super._response(null));
     } catch (error) {

@@ -60,8 +60,16 @@ class AuthsService extends Define {
    */
   async delete(req, res) {
     const { authid } = req.body;
-    const sql = `DELETE FROM auth WHERE authid = '${authid}';`;
     try {
+      const sql_1 = `SELECT * FROM role_auth WHERE authid = ?;`;
+      const rt = await query(sql_1, [authid]);
+      if (rt.length > 0) {
+        res
+          .status(200)
+          .json(super._response(null, 0, '该权限已被角色使用，无法删除'));
+        return;
+      }
+      const sql = `DELETE FROM auth WHERE authid = '${authid}';`;
       await query(sql);
       res.status(200).json(super._response(null));
     } catch (error) {

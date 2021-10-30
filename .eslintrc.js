@@ -19,6 +19,7 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-param-reassign': 'off',
     camelcase: 'off',
+    'max-len': ['off', { code: 300 }],
     'no-unused-vars': ['error', { argsIgnorePattern: 'next|fields' }],
   },
 };
