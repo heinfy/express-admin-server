@@ -68,8 +68,6 @@ const apiRequestLogger = (req, res, next) => {
     content = arguments[0];
     send.apply(res, arguments);
   };
-  // console.log('headers', req.headers);
-  // console.log('_startTime', req._startTime);
   expressWinston.logger({
     transports: [
       DailyRotateFileTransport('api-request'),
