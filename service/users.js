@@ -7,8 +7,6 @@ const { decrypt } = require('../utils/crypto-node-rsa');
 class usersService extends Define {
   constructor() {
     super();
-    // 获取 user 列表
-    this.SQL_USERLIST = 'SELECT id, userid, email FROM user;';
     // 根据 emial 获取 user
     this.SQL_USER_EMAIL = 'SELECT * FROM `user` where `email`=?';
     // 根据邮箱获取 userid
@@ -33,9 +31,48 @@ class usersService extends Define {
    * 获取 user 列表
    */
   async users(req, res) {
+    const {
+      page = 1,
+      size = 20,
+      userid = null,
+      email = null,
+      startTime = null,
+      endTime = null,
+    } = req.query;
+    const offset = (page - 1) * size,
+      limit = size;
+    let filterStr = '';
+    if (userid) {
+      filterStr += `userid like '%${userid}%'`;
+    }
+    if (email) {
+      filterStr +=
+        filterStr === ''
+          ? `email like '%${email}%'`
+          : `and email = '%${email}%'`;
+    }
+    if (startTime && endTime) {
+      const timeStr = `createdAt between '${startTime} 00:00:00' and '${startTime} 23:59:59'`;
+      filterStr += filterStr === '' ? timeStr : `and ${timeStr}`;
+    }
+    //  offset 跳过多少条; limit 取多少条
+    const countStr = `LIMIT ${offset},${limit};`;
+    const sql_1 = `SELECT userid, email, createdAt, updatedAt FROM user ${
+      filterStr ? 'WHERE ' + filterStr : filterStr
+    } ${countStr}`;
+    const sql_2 = `SELECT COUNT(id) as total FROM user ${
+      filterStr ? 'WHERE ' + filterStr : filterStr
+    } ${countStr}`;
     try {
-      let result = await query(this.SQL_USERLIST);
-      res.status(200).json(super._response(result));
+      let result_1 = await query(sql_1);
+      let result_2 = await query(sql_2);
+      let total = result_2[0]['total'];
+      res.status(200).json(
+        super._response({
+          data: result_1,
+          total,
+        })
+      );
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }

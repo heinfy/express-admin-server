@@ -10,11 +10,58 @@ class AuthsService extends Define {
    * 获取权限列表
    */
   async auths(req, res) {
-    const sql =
-      'SELECT authid, pid, type, authName, authDesc, authSort, createdAt, updatedAt FROM auth;';
+    const {
+      page = 1,
+      size = 20,
+      authid = null,
+      authName = null,
+      pid = null,
+      type = null,
+      startTime = null,
+      endTime = null,
+    } = req.query;
+    const offset = (page - 1) * size,
+      limit = size;
+    let filterStr = '';
+    if (authid) {
+      filterStr += `authid like '%${authid}%'`;
+    }
+    if (authName) {
+      filterStr +=
+        filterStr === ''
+          ? `authName like '%${authName}%'`
+          : `and authName like '%${authName}%'`;
+    }
+    if (pid) {
+      filterStr +=
+        filterStr === '' ? `pid like '%${pid}%'` : `and pid like '%${pid}%'`;
+    }
+    if (type) {
+      filterStr +=
+        filterStr === '' ? `type = '${type}'` : `and type = '${type}'`;
+    }
+    if (startTime && endTime) {
+      const timeStr = `createdAt between '${startTime} 00:00:00' and '${startTime} 23:59:59'`;
+      filterStr += filterStr === '' ? timeStr : `and ${timeStr}`;
+    }
+    //  offset 跳过多少条; limit 取多少条
+    const countStr = `LIMIT ${offset},${limit};`;
+    const sql_1 = `SELECT authid, pid, type, authName, authDesc, authSort, createdAt, updatedAt FROM auth ${
+      filterStr ? 'WHERE ' + filterStr : filterStr
+    } ${countStr}`;
+    const sql_2 = `SELECT COUNT(id) as total FROM auth ${
+      filterStr ? 'WHERE ' + filterStr : filterStr
+    } ${countStr}`;
     try {
-      let result = await query(sql);
-      res.status(200).json(super._response(result));
+      let result_1 = await query(sql_1);
+      let result_2 = await query(sql_2);
+      let total = result_2[0]['total'];
+      res.status(200).json(
+        super._response({
+          data: result_1,
+          total,
+        })
+      );
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }

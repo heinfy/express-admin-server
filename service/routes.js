@@ -10,11 +10,58 @@ class RoutesService extends Define {
    * 获取路由列表
    */
   async routes(req, res) {
-    const sql =
-      'SELECT routeid, route, routeName, icon, routeSort, createdAt, updatedAt FROM route;';
+    const {
+      page = 1,
+      size = 20,
+      routeid = null,
+      route = null,
+      routeName = null,
+      startTime = null,
+      endTime = null,
+    } = req.query;
+    const offset = (page - 1) * size,
+      limit = size;
+    let filterStr = '';
+    if (routeid) {
+      filterStr +=
+        filterStr === ''
+          ? `routeid like '%${routeid}%'`
+          : `and routeid like '%${routeid}%'`;
+    }
+    if (route) {
+      filterStr +=
+        filterStr === ''
+          ? `route like '%${route}%'`
+          : `and route like '%${route}%'`;
+    }
+    if (routeName) {
+      filterStr +=
+        filterStr === ''
+          ? `routeName like '%${routeName}%'`
+          : `and routeName like '%${routeName}%'`;
+    }
+    if (startTime && endTime) {
+      const timeStr = `createdAt between '${startTime} 00:00:00' and '${startTime} 23:59:59'`;
+      filterStr += filterStr === '' ? timeStr : `and ${timeStr}`;
+    }
+    //  offset 跳过多少条; limit 取多少条
+    const countStr = `LIMIT ${offset},${limit};`;
+    const sql_1 = `SELECT routeid, route, routeName, icon, routeSort, createdAt, updatedAt FROM route ${
+      filterStr ? 'WHERE ' + filterStr : filterStr
+    } ${countStr}`;
+    const sql_2 = `SELECT COUNT(id) as total FROM route ${
+      filterStr ? 'WHERE ' + filterStr : filterStr
+    } ${countStr}`;
     try {
-      let result = await query(sql);
-      res.status(200).json(super._response(result));
+      let result_1 = await query(sql_1);
+      let result_2 = await query(sql_2);
+      let total = result_2[0]['total'];
+      res.status(200).json(
+        super._response({
+          data: result_1,
+          total,
+        })
+      );
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }
