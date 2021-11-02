@@ -69,13 +69,13 @@ class LogController {
         .skip(Number(offset)) // 跳过多少条
         .limit(Number(limit)) // 取多少条
         .sort({
-          createAt: -1, // -1：倒序 1：升序
+          createAt: 1, // -1：倒序 1：升序
         });
-      const count = await LogModel.countDocuments(filter);
+      const total = await LogModel.countDocuments(filter);
       res.status(200).json({
         result: {
           data,
-          count,
+          total,
         },
         code: 1,
         message: 'success',
