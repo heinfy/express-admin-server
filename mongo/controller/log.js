@@ -9,6 +9,7 @@ class LogController {
    * 创建日志
    */
   createLog(req, res, next) {
+    console.log('req', req);
     // 过滤掉 /getLogList? 接口，不创建日志
     if (req.url.indexOf('/getLogList?') > -1) {
       next();
@@ -20,7 +21,7 @@ class LogController {
       content = arguments[0] && JSON.parse(arguments[0]).result;
       send.apply(res, arguments);
       const userid = req.headers.userid,
-        url = req.url,
+        url = req._parsedOriginalUrl.pathname,
         method = req.method,
         params = req.params || null,
         query = req.query || null,
