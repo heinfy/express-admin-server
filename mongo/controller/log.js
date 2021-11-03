@@ -9,7 +9,6 @@ class LogController {
    * 创建日志
    */
   createLog(req, res, next) {
-    console.log('req', req);
     // 过滤掉 /getLogList? 接口，不创建日志
     if (req.url.indexOf('/getLogList?') > -1) {
       next();
