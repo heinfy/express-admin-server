@@ -12,8 +12,7 @@ const LogSchema = new Schema({
   content: { type: Object, default: {} },
   headers: { type: Object, required: false },
   _startTime: { type: String, required: false },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: () => Date.now() + 8 * 60 * 60 * 1000 },
 });
 
 module.exports = mongoose.model('Log', LogSchema);

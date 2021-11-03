@@ -1,5 +1,5 @@
+const moment = require('moment');
 const LogModel = require('../model/log');
-
 class LogController {
   constructor() {
     this.createLog = this.createLog.bind(this);
@@ -25,8 +25,7 @@ class LogController {
         params = req.params || null,
         query = req.query || null,
         body = req.body || null,
-        headers = req.headers,
-        _startTime = req._startTime;
+        headers = req.headers;
       let requestInfo = {
         userid,
         url,
@@ -36,7 +35,6 @@ class LogController {
         body,
         content,
         headers,
-        _startTime,
       };
       try {
         const logInfo = await new LogModel(requestInfo);
@@ -52,7 +50,15 @@ class LogController {
    */
   async getLogList(req, res) {
     try {
-      const { size = 20, page = 0, userid, url, method } = req.query;
+      const {
+        size = 20,
+        page = 0,
+        userid,
+        url,
+        method,
+        startTime,
+        endTime,
+      } = req.query;
       const offset = (page - 1) * size,
         limit = size;
       const filter = {};
@@ -63,13 +69,20 @@ class LogController {
         filter.url = url;
       }
       if (method) {
-        filter.method = method;
+        filter.method = method.toUpperCase();
+      }
+      if (startTime && endTime) {
+        const t = 8 * 60 * 60 * 1000;
+        filter.createdAt = {
+          $gte: new Date(+new Date(`${startTime} 00:00:00`) + t),
+          $lte: new Date(+new Date(`${endTime} 19:56:59`) + t),
+        };
       }
       const data = await LogModel.find(filter)
         .skip(Number(offset)) // 跳过多少条
         .limit(Number(limit)) // 取多少条
         .sort({
-          createAt: 1, // -1：倒序 1：升序
+          createdAt: -1, // -1：倒序 1：升序
         });
       const total = await LogModel.countDocuments(filter);
       res.status(200).json({
