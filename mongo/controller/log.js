@@ -16,12 +16,11 @@ class LogController {
     }
     let send = res.send;
     let content = '';
+    let code = '';
     res.send = async function () {
       let result = arguments[0] && JSON.parse(arguments[0]);
-      content = {
-        code: result.code,
-        message: result.message,
-      };
+      content = result.message || null;
+      code = result.code || '0';
       send.apply(res, arguments);
       const userid = req.headers.userid,
         url = req.url.split('?')[0],
@@ -38,6 +37,7 @@ class LogController {
         query,
         body,
         content,
+        code,
         headers,
       };
       try {
