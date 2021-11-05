@@ -17,10 +17,14 @@ class LogController {
     let send = res.send;
     let content = '';
     res.send = async function () {
-      content = arguments[0] && JSON.parse(arguments[0]).result;
+      let result = arguments[0] && JSON.parse(arguments[0]);
+      content = {
+        code: result.code,
+        message: result.message,
+      };
       send.apply(res, arguments);
       const userid = req.headers.userid,
-        url = req._parsedOriginalUrl.pathname,
+        url = req.url.split('?')[0],
         method = req.method,
         params = req.params || null,
         query = req.query || null,
@@ -50,15 +54,7 @@ class LogController {
    */
   async getLogList(req, res) {
     try {
-      const {
-        size = 20,
-        page = 0,
-        userid,
-        url,
-        method,
-        startTime,
-        endTime,
-      } = req.query;
+      const { size = 20, page = 0, userid, url, method, timeRange } = req.body;
       const offset = (page - 1) * size,
         limit = size;
       const filter = {};
@@ -71,11 +67,13 @@ class LogController {
       if (method) {
         filter.method = method.toUpperCase();
       }
-      if (startTime && endTime) {
+      if (timeRange && timeRange.length === 2) {
         const t = 8 * 60 * 60 * 1000;
+        const startTime = moment(timeRange[0]).format('YYYY-MM-DD');
+        const endTime = moment(timeRange[1]).format('YYYY-MM-DD');
         filter.createdAt = {
           $gte: new Date(+new Date(`${startTime} 00:00:00`) + t),
-          $lte: new Date(+new Date(`${endTime} 19:56:59`) + t),
+          $lte: new Date(+new Date(`${endTime} 23:59:59`) + t),
         };
       }
       const data = await LogModel.find(filter)

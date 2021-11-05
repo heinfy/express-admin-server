@@ -54,7 +54,7 @@ module.exports = {
     middlewares: [isRightUserid],
   },
   // 获取访问日志列表
-  'GET /getLogList': {
+  'POST /getLogList': {
     path: 'UsersController.getLogList',
   },
 };
