@@ -36,8 +36,7 @@ class usersService extends Define {
       size = 20,
       userid = null,
       email = null,
-      startTime = null,
-      endTime = null,
+      timeRange = null,
     } = req.query;
     const offset = (page - 1) * size,
       limit = size;
@@ -51,11 +50,14 @@ class usersService extends Define {
           ? `email like '%${email}%'`
           : `and email = '%${email}%'`;
     }
-    if (startTime && endTime) {
-      const timeStr = `createdAt between '${startTime} 00:00:00' and '${startTime} 23:59:59'`;
+    if (timeRange && timeRange.length === 2) {
+      const startTime = timeRange[0];
+      const endTime = timeRange[1];
+      const timeStr = `createdAt between '${startTime} 00:00:00' and '${endTime} 23:59:59'`;
       filterStr += filterStr === '' ? timeStr : `and ${timeStr}`;
     }
     //  offset 跳过多少条; limit 取多少条
+    // const fragmentStr = 'u.userid = ur.userid and ur.roleid = r.roleid';
     const countStr = `LIMIT ${offset},${limit};`;
     const sql_1 = `SELECT userid, email, createdAt, updatedAt FROM user ${
       filterStr ? 'WHERE ' + filterStr : filterStr
