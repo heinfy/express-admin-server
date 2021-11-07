@@ -58,7 +58,7 @@ class usersService extends Define {
     }
     //  offset 跳过多少条; limit 取多少条
     const countStr = `LIMIT ${offset},${limit};`;
-    const sql_1 = `SELECT userid, email, createdAt, updatedAt FROM user ${
+    const sql_1 = `SELECT userid, username, email, createdAt, updatedAt FROM user ${
       filterStr ? 'WHERE ' + filterStr : filterStr
     } ${countStr}`;
     const sql_3 = `SELECT COUNT(id) as total FROM user ${
