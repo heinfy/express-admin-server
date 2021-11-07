@@ -57,18 +57,31 @@ class usersService extends Define {
       filterStr += filterStr === '' ? timeStr : `and ${timeStr}`;
     }
     //  offset 跳过多少条; limit 取多少条
-    // const fragmentStr = 'u.userid = ur.userid and ur.roleid = r.roleid';
     const countStr = `LIMIT ${offset},${limit};`;
     const sql_1 = `SELECT userid, email, createdAt, updatedAt FROM user ${
       filterStr ? 'WHERE ' + filterStr : filterStr
     } ${countStr}`;
-    const sql_2 = `SELECT COUNT(id) as total FROM user ${
+    const sql_3 = `SELECT COUNT(id) as total FROM user ${
       filterStr ? 'WHERE ' + filterStr : filterStr
     } ${countStr}`;
     try {
       let result_1 = await query(sql_1);
+      const userids = result_1.map((user) => `'${user.userid}'`).join(',');
+      const sql_2 = `SELECT ur.userid, r.roleid, r.roleName FROM user_role ur, role r WHERE ur.userid in (${userids}) and ur.roleid = r.roleid`;
       let result_2 = await query(sql_2);
-      let total = result_2[0]['total'];
+      result_1 = result_1.map((user) => {
+        let roles = result_2.filter((role) => user.userid === role.userid);
+        roles = roles.map((role) => ({
+          roleid: role.roleid,
+          roleName: role.roleName,
+        }));
+        return {
+          ...user,
+          roles: roles,
+        };
+      });
+      let result_3 = await query(sql_3);
+      let total = result_3[0]['total'];
       res.status(200).json(
         super._response({
           data: result_1,
