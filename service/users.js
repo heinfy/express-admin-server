@@ -1,4 +1,5 @@
 const uid2 = require('uid2');
+const moment = require('moment');
 const Define = require('../utils/_define');
 const { query } = require('../mysql');
 const md5 = require('../utils/md5');
@@ -37,7 +38,7 @@ class usersService extends Define {
       userid = null,
       email = null,
       timeRange = null,
-    } = req.query;
+    } = req.body;
     const offset = (page - 1) * size,
       limit = size;
     let filterStr = '';
@@ -51,14 +52,14 @@ class usersService extends Define {
           : `and email = '%${email}%'`;
     }
     if (timeRange && timeRange.length === 2) {
-      const startTime = timeRange[0];
-      const endTime = timeRange[1];
+      const startTime = moment(timeRange[0]).format('YYYY-MM-DD');
+      const endTime = moment(timeRange[1]).format('YYYY-MM-DD');
       const timeStr = `createdAt between '${startTime} 00:00:00' and '${endTime} 23:59:59'`;
       filterStr += filterStr === '' ? timeStr : `and ${timeStr}`;
     }
     //  offset 跳过多少条; limit 取多少条
     const countStr = `LIMIT ${offset},${limit};`;
-    const sql_1 = `SELECT userid, username, email, createdAt, updatedAt FROM user ${
+    const sql_1 = `SELECT * FROM user ${
       filterStr ? 'WHERE ' + filterStr : filterStr
     } ${countStr}`;
     const sql_3 = `SELECT COUNT(id) as total FROM user ${
@@ -66,20 +67,22 @@ class usersService extends Define {
     } ${countStr}`;
     try {
       let result_1 = await query(sql_1);
-      const userids = result_1.map((user) => `'${user.userid}'`).join(',');
-      const sql_2 = `SELECT ur.userid, r.roleid, r.roleName FROM user_role ur, role r WHERE ur.userid in (${userids}) and ur.roleid = r.roleid`;
-      let result_2 = await query(sql_2);
-      result_1 = result_1.map((user) => {
-        let roles = result_2.filter((role) => user.userid === role.userid);
-        roles = roles.map((role) => ({
-          roleid: role.roleid,
-          roleName: role.roleName,
-        }));
-        return {
-          ...user,
-          roles: roles,
-        };
-      });
+      if (result_1.length !== 0) {
+        const userids = result_1.map((user) => `'${user.userid}'`).join(',');
+        const sql_2 = `SELECT ur.userid, r.roleid, r.roleName FROM user_role ur, role r WHERE ur.userid in (${userids}) and ur.roleid = r.roleid`;
+        let result_2 = await query(sql_2);
+        result_1 = result_1.map((user) => {
+          let roles = result_2.filter((role) => user.userid === role.userid);
+          roles = roles.map((role) => ({
+            roleid: role.roleid,
+            roleName: role.roleName,
+          }));
+          return {
+            ...user,
+            roles: roles,
+          };
+        });
+      }
       let result_3 = await query(sql_3);
       let total = result_3[0]['total'];
       res.status(200).json(

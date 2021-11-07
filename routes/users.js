@@ -5,7 +5,7 @@ const { register, update, del, isRightUserid } = require('../validator/users');
 
 module.exports = {
   // 获取 user 列表
-  'GET /users': 'UsersController.users',
+  'POST /users': 'UsersController.users',
   // 新建 user
   'POST /user': {
     path: 'UsersController.create',
