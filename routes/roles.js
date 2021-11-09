@@ -5,7 +5,7 @@ const { create, update, del } = require('../validator/roles');
 
 module.exports = {
   // 获取 role 列表
-  'GET /roles': 'RolesController.roles',
+  'POST /roles': 'RolesController.roles',
   // 新建 role
   'POST /role': {
     path: 'RolesController.create',

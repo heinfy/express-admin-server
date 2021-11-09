@@ -1,3 +1,4 @@
+const moment = require('moment');
 const uid2 = require('uid2');
 const Define = require('../utils/_define');
 const { query } = require('../mysql');
@@ -28,15 +29,18 @@ class rolesService extends Define {
         page = 1,
         size = 20,
         roleid = null,
+        roleSort = null,
         roleName = null,
-        startTime = null,
-        endTime = null,
-      } = req.query;
+        timeRange = null
+      } = req.body;
       const offset = (page - 1) * size,
         limit = size;
       let filterStr = '';
       if (roleid) {
         filterStr += `roleid like '%${roleid}%'`;
+      }
+      if (roleSort) {
+        filterStr += `roleSort = '${roleSort}'`;
       }
       if (roleName) {
         filterStr +=
@@ -44,13 +48,15 @@ class rolesService extends Define {
             ? `roleName like '%${roleName}%'`
             : `and roleName like '%${roleName}%'`;
       }
-      if (startTime && endTime) {
-        const timeStr = `createdAt between '${startTime} 00:00:00' and '${startTime} 23:59:59'`;
+      if (timeRange && timeRange.length === 2) {
+        const startTime = moment(timeRange[0]).format('YYYY-MM-DD');
+        const endTime = moment(timeRange[1]).format('YYYY-MM-DD');
+        const timeStr = `createdAt between '${startTime} 00:00:00' and '${endTime} 23:59:59'`;
         filterStr += filterStr === '' ? timeStr : `and ${timeStr}`;
       }
       //  offset 跳过多少条; limit 取多少条
       const countStr = `LIMIT ${offset},${limit};`;
-      const sql_1 = `SELECT roleid, roleName, roleDesc, roleSort, createdAt, updatedAt FROM role ${
+      const sql_1 = `SELECT * FROM role ${
         filterStr ? 'WHERE ' + filterStr : filterStr
       } ${countStr}`;
       const sql_2 = `SELECT COUNT(id) as total FROM role ${
