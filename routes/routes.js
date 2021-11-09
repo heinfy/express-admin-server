@@ -5,7 +5,7 @@ const { create, update, del } = require('../validator/routes');
 
 module.exports = {
   // 获取路由列表
-  'GET /routes': 'RoutesController.routes',
+  'POST /routes': 'RoutesController.routes',
   // 新建路由
   'POST /route': {
     path: 'RoutesController.create',

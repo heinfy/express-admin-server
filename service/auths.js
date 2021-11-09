@@ -17,14 +17,13 @@ class AuthsService extends Define {
       authName = null,
       pid = null,
       type = null,
-      startTime = null,
-      endTime = null,
-    } = req.query;
+      timeRange = null,
+    } = req.body;
     const offset = (page - 1) * size,
       limit = size;
     let filterStr = '';
     if (authid) {
-      filterStr += `authid like '%${authid}%'`;
+      filterStr += `a.authid like '%${authid}%'`;
     }
     if (authName) {
       filterStr +=
@@ -34,22 +33,27 @@ class AuthsService extends Define {
     }
     if (pid) {
       filterStr +=
-        filterStr === '' ? `pid like '%${pid}%'` : `and pid like '%${pid}%'`;
+        filterStr === ''
+          ? `a.pid like '%${pid}%'`
+          : `and a.pid like '%${pid}%'`;
     }
     if (type) {
       filterStr +=
-        filterStr === '' ? `type = '${type}'` : `and type = '${type}'`;
+        filterStr === '' ? `a.type = '${type}'` : `and a.type = '${type}'`;
     }
-    if (startTime && endTime) {
-      const timeStr = `createdAt between '${startTime} 00:00:00' and '${startTime} 23:59:59'`;
+    if (timeRange && timeRange.length === 2) {
+      const startTime = moment(timeRange[0]).format('YYYY-MM-DD');
+      const endTime = moment(timeRange[1]).format('YYYY-MM-DD');
+      const timeStr = `a.createdAt between '${startTime} 00:00:00' and '${endTime} 23:59:59'`;
       filterStr += filterStr === '' ? timeStr : `and ${timeStr}`;
     }
+    const r = `a.authid = ar.authid and ar.routeid = r.routeid`;
     //  offset 跳过多少条; limit 取多少条
     const countStr = `LIMIT ${offset},${limit};`;
-    const sql_1 = `SELECT authid, pid, type, authName, authDesc, authSort, createdAt, updatedAt FROM auth ${
-      filterStr ? 'WHERE ' + filterStr : filterStr
+    const sql_1 = `SELECT a.authid, a.pid, a.type, a.authName, a.authDesc, a.authSort, a.createdAt, a.updatedAt, r.routeName FROM auth a, auth_route ar, route r WHERE ${filterStr} ${
+      filterStr ? 'and ' + r : r
     } ${countStr}`;
-    const sql_2 = `SELECT COUNT(id) as total FROM auth ${
+    const sql_2 = `SELECT COUNT(id) as total FROM auth a ${
       filterStr ? 'WHERE ' + filterStr : filterStr
     } ${countStr}`;
     try {

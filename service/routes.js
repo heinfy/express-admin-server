@@ -18,7 +18,7 @@ class RoutesService extends Define {
       routeName = null,
       startTime = null,
       endTime = null,
-    } = req.query;
+    } = req.body;
     const offset = (page - 1) * size,
       limit = size;
     let filterStr = '';
@@ -46,7 +46,7 @@ class RoutesService extends Define {
     }
     //  offset 跳过多少条; limit 取多少条
     const countStr = `LIMIT ${offset},${limit};`;
-    const sql_1 = `SELECT routeid, route, routeName, icon, routeSort, createdAt, updatedAt FROM route ${
+    const sql_1 = `SELECT * FROM route ${
       filterStr ? 'WHERE ' + filterStr : filterStr
     } ${countStr}`;
     const sql_2 = `SELECT COUNT(id) as total FROM route ${

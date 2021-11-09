@@ -5,7 +5,7 @@ const { create, update, del, isMenu } = require('../validator/auths');
 
 module.exports = {
   // 获取权限列表
-  'GET /auths': 'AuthsController.auths',
+  'POST /auths': 'AuthsController.auths',
   // 新建权限
   'POST /auth': {
     path: 'AuthsController.create',
