@@ -96,7 +96,6 @@ class RoutesService extends Define {
       await query(sql, [route, routeName, icon, routeSort, routeid]);
       const result = { route, routeName, icon, routeSort, routeid };
       res.status(200).json(super._response(result));
-      res.status(200).json(super._response(result));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }
