@@ -49,7 +49,7 @@ class AuthsService extends Define {
     }
     //  offset 跳过多少条; limit 取多少条
     const countStr = `LIMIT ${offset},${limit};`;
-    const sql_1 = `SELECT a.*, ar.routeid,(select r.routeName from route r where ar.routeid = r.routeid) as routeName FROM auth a LEFT JOIN auth_route ar ON a.authid = ar.authid ${
+    const sql_1 = `SELECT a.*, ar.routeid, ar.routeid,(select r.routeName from route r where ar.routeid = r.routeid) as routeName FROM auth a LEFT JOIN auth_route ar ON a.authid = ar.authid ${
       filterStr ? 'WHERE ' + filterStr : filterStr
     } ORDER BY a.authSort ${countStr}`;
     const sql_2 = `SELECT COUNT(id) as total FROM auth a ${
@@ -148,18 +148,25 @@ class AuthsService extends Define {
     try {
       // 检查本次插入的权限是否已经存在在数据库中
       const sql_1 = 'SELECT * FROM `auth_route` where `authid`=?;';
-      let re = await query(sql_1, [authid]);
-      if (re.length === 1) {
+      let re1 = await query(sql_1, [authid]);
+      if (re1.length === 1) {
         res.status(200).json(super._response(null, 0, '该权限已添加过路由'));
         return;
       }
-      const sql_2 = 'INSERT INTO `auth_route` SET ?';
+      // 不允许一个路由被多个权限添加
+      const sql_2 = 'SELECT * FROM `auth_route` where `routeid`=?;';
+      let re2 = await query(sql_2, [routeid]);
+      if (re2.length === 1) {
+        res.status(200).json(super._response(null, 0, '该路由已添加过权限'));
+        return;
+      }
+      const sql_3 = 'INSERT INTO `auth_route` SET ?';
       let result = {
         authid,
         routeid,
       };
       // 将本次权限-路由插入数据库
-      await query(sql_2, [result]);
+      await query(sql_3, [result]);
       res.status(200).json(super._response(result));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
@@ -169,9 +176,16 @@ class AuthsService extends Define {
    * 更新 menu 类型的权限的路由
    */
   async updateAuthRoute(req, res) {
-    const { authid, routeid } = req.params;
+    const { authid, routeid } = req.body;
     const sql = 'UPDATE auth_route SET routeid = ? WHERE authid = ?;';
+    const sql_2 = 'SELECT * FROM `auth_route` where `routeid`=?;';
     try {
+      // 不允许一个路由被多个权限添加
+      let re2 = await query(sql_2, [routeid]);
+      if (re2.length === 1) {
+        res.status(200).json(super._response(null, 0, '该路由已添加过权限'));
+        return;
+      }
       await query(sql, [routeid, authid]);
       res.status(200).json(super._response(null));
     } catch (error) {
