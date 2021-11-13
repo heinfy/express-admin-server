@@ -47,12 +47,11 @@ class AuthsService extends Define {
       const timeStr = `a.createdAt between '${startTime} 00:00:00' and '${endTime} 23:59:59'`;
       filterStr += filterStr === '' ? timeStr : `and ${timeStr}`;
     }
-    const r = `a.authid = ar.authid and ar.routeid = r.routeid`;
     //  offset 跳过多少条; limit 取多少条
     const countStr = `LIMIT ${offset},${limit};`;
-    const sql_1 = `SELECT a.authid, a.pid, a.type, a.authName, a.authDesc, a.authSort, a.createdAt, a.updatedAt, r.routeName FROM auth a, auth_route ar, route r WHERE ${filterStr} ${
-      filterStr ? 'and ' + r : r
-    } ${countStr}`;
+    const sql_1 = `SELECT a.*, ar.routeid,(select r.routeName from route r where ar.routeid = r.routeid) as routeName FROM auth a LEFT JOIN auth_route ar ON a.authid = ar.authid ${
+      filterStr ? 'WHERE ' + filterStr : filterStr
+    } ORDER BY a.authSort ${countStr}`;
     const sql_2 = `SELECT COUNT(id) as total FROM auth a ${
       filterStr ? 'WHERE ' + filterStr : filterStr
     } ${countStr}`;
