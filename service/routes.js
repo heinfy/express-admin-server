@@ -48,7 +48,7 @@ class RoutesService extends Define {
     const countStr = `LIMIT ${offset},${limit};`;
     const sql_1 = `SELECT * FROM route ${
       filterStr ? 'WHERE ' + filterStr : filterStr
-    } ${countStr}`;
+    } ORDER BY route.routeSort ${countStr}`;
     const sql_2 = `SELECT COUNT(id) as total FROM route ${
       filterStr ? 'WHERE ' + filterStr : filterStr
     } ${countStr}`;

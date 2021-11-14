@@ -25,11 +25,6 @@ module.exports = {
   'GET /auth/:authid': {
     path: 'AuthsController.getAuthInfoByAuthid',
   },
-  // 给 menu 类型的权限添加对应的路由
-  'POST /giveAuthRoute': {
-    path: 'AuthsController.giveAuthRoute',
-    middlewares: [isMenu],
-  },
   // 更新 menu 类型的权限的路由
   'PUT /updateAuthRoute': {
     path: 'AuthsController.updateAuthRoute',

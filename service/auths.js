@@ -1,6 +1,7 @@
 const uid2 = require('uid2');
 const Define = require('../utils/_define');
 const { query } = require('../mysql');
+const e = require('express');
 
 class AuthsService extends Define {
   constructor() {
@@ -73,19 +74,48 @@ class AuthsService extends Define {
    * 新建权限
    */
   async create(req, res) {
-    const { pid, type, authName, authDesc, authSort } = req.body;
+    const { pid, type, authName, authDesc, authSort, routeid } = req.body;
     try {
-      const sql = 'INSERT INTO auth SET ?';
-      let auth = {
-        authid: uid2(8),
+      // 如果是路由权限，判断路由是否存在，已经是否被占用！
+      if (type === 'menu') {
+        if (routeid) {
+          const sql_1 = 'SELECT * FROM auth_route WHERE routeid=?;';
+          const re_1 = await query(sql_1, [routeid]);
+          if (re_1.length > 0) {
+            res
+              .status(200)
+              .json(super._response(null, 0, '该路由已被权限绑定！'));
+            return;
+          }
+        } else {
+          res
+            .status(200)
+            .json(super._response(null, 0, '请选择权限对应的路由'));
+          return;
+        }
+      }
+      const sql_2 = 'INSERT INTO auth SET ?';
+      const authid = uid2(8);
+      const auth = {
+        authid,
         pid,
         type,
         authName,
         authDesc,
         authSort,
       };
-      await query(sql, auth);
-      res.status(200).json(super._response(auth));
+      await query(sql_2, auth);
+      // 如果是路由权限，则保存 权限-路由 映射关系
+      if (type === 'menu') {
+        const sql_3 = 'INSERT INTO `auth_route` SET ?';
+        const result = {
+          authid,
+          routeid,
+        };
+        // 将本次权限-路由插入数据库
+        await query(sql_3, [result]);
+      }
+      res.status(200).json(super._response(null));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }
@@ -106,7 +136,7 @@ class AuthsService extends Define {
     }
   }
   /**
-   * 根据 authid 删除 role
+   * 根据 authid 删除 权限
    */
   async delete(req, res) {
     const { authid } = req.body;
@@ -119,8 +149,12 @@ class AuthsService extends Define {
           .json(super._response(null, 0, '该权限已被角色使用，无法删除'));
         return;
       }
-      const sql = `DELETE FROM auth WHERE authid = '${authid}';`;
-      await query(sql);
+      // 删除 权限路由表
+      const sql_3 = `DELETE FROM auth_route WHERE authid = '${authid}';`;
+      await query(sql_3);
+      // 删除权限表
+      const sql_2 = `DELETE FROM auth WHERE authid = '${authid}';`;
+      await query(sql_2);
       res.status(200).json(super._response(null));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
@@ -135,38 +169,6 @@ class AuthsService extends Define {
       'SELECT authid, pid, type, authName, authDesc, authSort, createdAt, updatedAt FROM `auth` where `authid`=?;';
     try {
       let result = await query(sql, [authid]);
-      res.status(200).json(super._response(result));
-    } catch (error) {
-      res.status(200).json(super._response(null, 0, '' + error));
-    }
-  }
-  /**
-   * 给 menu 类型的权限添加对应的路由
-   */
-  async giveAuthRoute(req, res) {
-    const { authid, routeid } = req.body;
-    try {
-      // 检查本次插入的权限是否已经存在在数据库中
-      const sql_1 = 'SELECT * FROM `auth_route` where `authid`=?;';
-      let re1 = await query(sql_1, [authid]);
-      if (re1.length === 1) {
-        res.status(200).json(super._response(null, 0, '该权限已添加过路由'));
-        return;
-      }
-      // 不允许一个路由被多个权限添加
-      const sql_2 = 'SELECT * FROM `auth_route` where `routeid`=?;';
-      let re2 = await query(sql_2, [routeid]);
-      if (re2.length === 1) {
-        res.status(200).json(super._response(null, 0, '该路由已添加过权限'));
-        return;
-      }
-      const sql_3 = 'INSERT INTO `auth_route` SET ?';
-      let result = {
-        authid,
-        routeid,
-      };
-      // 将本次权限-路由插入数据库
-      await query(sql_3, [result]);
       res.status(200).json(super._response(result));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
