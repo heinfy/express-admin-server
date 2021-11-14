@@ -117,10 +117,9 @@ class usersService extends Define {
       // 新建用户
       await query(this.SQL_USER, user);
       // 赋予角色 如果 roleids 不存在，则自动赋予基础角色
-      const params = (roleids && roleids.map((roleid) => [roleid, userid])) || [
-        'g_TpK5',
-        userid,
-      ];
+      let params = roleids
+        ? roleids.map((roleid) => [roleid, userid])
+        : ['g_TpK5', userid];
       await query(this.SQL_USER_ROLE, [[params]]);
       res.status(200).json(super._response(null));
     } catch (error) {
@@ -155,11 +154,7 @@ class usersService extends Define {
       const sql = `UPDATE user SET ${fragment} WHERE userid = ?`,
         sqlArray = sqlOptions.map((item) => Object.values(item)[0]);
       await query(sql, [...sqlArray, userid]);
-      let result = {};
-      for (var item of sqlOptions) {
-        result = { ...result, ...item };
-      }
-      res.status(200).json(super._response(result));
+      this.updateUserRoles(req, res);
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }
@@ -224,7 +219,9 @@ class usersService extends Define {
     // INSERT INTO resource (one, two, ...) VALUES  (?, ?, ?, ?), (?, ?, ?, ?), [...];
     // INSERT INTO user_role (roleid, userid) VALUES ("BN3Uvludoi", "hjs8vs"), ("BN3Uvludoi", "5ikcWP");
     // https://blog.csdn.net/lym152898/article/details/78246230
-    const params = roleids.map((roleid) => [roleid, userid]);
+    let params = roleids
+      ? roleids.map((roleid) => [roleid, userid])
+      : ['g_TpK5', userid];
     try {
       await query(this.SQL_USER_ROLE, [params]);
       res.status(200).json(super._response(null));
