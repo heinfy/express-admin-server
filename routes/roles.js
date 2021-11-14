@@ -25,13 +25,9 @@ module.exports = {
   'GET /role/:roleid': {
     path: 'RolesController.getRoleInfoByRoleid',
   },
-  // 角色设置权限
+  // 角色设置权限/更新权限
   'POST /giveRoleAuths': {
     path: 'RolesController.giveRoleAuths',
-  },
-  // 角色更新权限
-  'PUT /updateRoleAuths': {
-    path: 'RolesController.updateRoleAuths',
   },
   // 根据 roleid 获取权限列表
   'GET /getAuthsByRoleid/:roleid': {

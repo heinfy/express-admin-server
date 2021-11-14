@@ -1,7 +1,6 @@
 const uid2 = require('uid2');
 const Define = require('../utils/_define');
 const { query } = require('../mysql');
-const e = require('express');
 
 class AuthsService extends Define {
   constructor() {
@@ -129,7 +128,6 @@ class AuthsService extends Define {
       const sql = `UPDATE auth SET pid =? , type = ?,authName = ?, authDesc = ?, authSort = ? WHERE authid = ?;`;
       await query(sql, [pid, type, authName, authDesc, authSort, authid]);
       const result = { pid, type, authName, authDesc, authSort, authid };
-      res.status(200).json(super._response(result));
       res.status(200).json(super._response(result));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));

@@ -12,10 +12,7 @@ class rolesService extends Define {
     this.updateRoleSql = `UPDATE role SET roleName = ?, roleDesc = ?, roleSort = ? WHERE roleid = ?;`;
     // 根据 roleid 获取角色信息
     this.getRoleInfoByRoleidSql =
-      'SELECT  roleid, roleName, roleDesc, roleSort, createdAt, updatedAt FROM `role` where `roleid`=?';
-    // 给角色设置权限
-    this.giveRoleAuthsSql =
-      'INSERT INTO role_auth (`roleid`, `authid`) VALUES ?';
+      'SELECT roleid, roleName, roleDesc, roleSort, createdAt, updatedAt FROM `role` where `roleid`=?';
     // 根据 roleid 获取权限列表
     this.getAuthsByRoleidSql =
       'SELECT r.roleid, r.authid, a.authName, a.type FROM role_auth r, auth a WHERE r.roleid = ? and r.authid = a.authid;';
@@ -31,7 +28,7 @@ class rolesService extends Define {
         roleid = null,
         roleSort = null,
         roleName = null,
-        timeRange = null
+        timeRange = null,
       } = req.body;
       const offset = (page - 1) * size,
         limit = size;
@@ -140,29 +137,24 @@ class rolesService extends Define {
     }
   }
   /**
-   * 给角色设置权限
+   * 给角色设置/更新权限
    */
   async giveRoleAuths(req, res) {
     const { roleid, authids } = req.body;
-    let params = authids.map((authid) => [roleid, authid]);
     try {
-      await query(this.giveRoleAuthsSql, [params]);
+      // 1. 在 role_auth 表，判断角色是否绑定了权限
+      const sql1 = 'SELECT * FROM role_auth WHERE roleid=?';
+      const re1 = await query(sql1, [roleid]);
+      if (re1.length > 0) {
+        // 2. 如果绑定： 删除原来的角色权限
+        let sql2 = 'DELETE FROM role_auth WHERE roleid = ?;';
+        await query(sql2, [roleid]);
+      }
+      // 3. 如果没有绑定：直接添加新的权限
+      let params = authids.map((authid) => [roleid, authid]);
+      const sql3 = 'INSERT INTO role_auth (`roleid`, `authid`) VALUES ?';
+      await query(sql3, [params]);
       res.status(200).json(super._response(null));
-    } catch (error) {
-      res.status(200).json(super._response(null, 0, '' + error));
-    }
-  }
-  /**
-   * 更新角色的权限
-   */
-  async updateRoleAuths(req, res) {
-    const { roleid } = req.body;
-    try {
-      // 删除原来的角色权限
-      let sql = 'DELETE FROM role_auth WHERE roleid = ?;';
-      await query(sql, [roleid]);
-      // 添加新的角色权限
-      this.giveRoleAuths(req, res);
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }

@@ -19,9 +19,6 @@ module.exports = class UsersController {
   giveRoleAuths(req, res) {
     RolesService.giveRoleAuths(req, res);
   }
-  updateRoleAuths(req, res) {
-    RolesService.updateRoleAuths(req, res);
-  }
   getAuthsByRoleid(req, res) {
     RolesService.getAuthsByRoleid(req, res);
   }
