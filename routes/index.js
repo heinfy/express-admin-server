@@ -12,6 +12,7 @@ const usersRouterMaps = require('./users');
 const rolesRouterMaps = require('./roles');
 const authsRouterMaps = require('./auths');
 const routesRouterMaps = require('./routes');
+const chartRouterMaps = require('./chart');
 
 const PREFIX = '/api';
 
@@ -21,6 +22,7 @@ const adminRoutes = {
   ...rolesRouterMaps,
   ...authsRouterMaps,
   ...routesRouterMaps,
+  ...chartRouterMaps,
 };
 
 const baseRoutes = {
