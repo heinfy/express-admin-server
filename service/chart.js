@@ -61,6 +61,34 @@ class ChaetService extends Define {
       res.status(200).json(super._response(null, 0, '' + error));
     }
   }
+  /**
+   * 获取 line 页面的所有数据
+   */
+  async lineJson(req, res) {
+    try {
+      const consult = await _readFile(
+        _resolve('../json', 'consult.json'),
+        'utf-8'
+      );
+      const income = await _readFile(
+        _resolve('../json', 'income.json'),
+        'utf-8'
+      );
+      const temperature = await _readFile(
+        _resolve('../json', 'temperature.json'),
+        'utf-8'
+      );
+      res.status(200).json(
+        super._response({
+          consult: JSON.parse(consult),
+          income: JSON.parse(income),
+          temperature: JSON.parse(temperature),
+        })
+      );
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
 }
 
 module.exports = new ChaetService();

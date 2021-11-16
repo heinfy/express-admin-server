@@ -13,4 +13,7 @@ module.exports = class ChartController {
   consumption(req, res) {
     ChartService.consumption(req, res);
   }
+  lineJson(req, res) {
+    ChartService.lineJson(req, res);
+  }
 };

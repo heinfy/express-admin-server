@@ -1,0 +1,182 @@
+[
+  {
+    "month": "Jan",
+    "city": "北京",
+    "temperature": -4.6
+  },
+  {
+    "month": "Jan",
+    "city": "上海",
+    "temperature": 3.5
+  },
+  {
+    "month": "Jan",
+    "city": "广州",
+    "temperature": 13.3
+  },
+  {
+    "month": "Feb",
+    "city": "北京",
+    "temperature": -2.2
+  },
+  {
+    "month": "Feb",
+    "city": "上海",
+    "temperature": 4.6
+  },
+  {
+    "month": "Feb",
+    "city": "广州",
+    "temperature": 14.4
+  },
+  {
+    "month": "Mar",
+    "city": "北京",
+    "temperature": 4.5
+  },
+  {
+    "month": "Mar",
+    "city": "上海",
+    "temperature": 8.3
+  },
+  {
+    "month": "Mar",
+    "city": "广州",
+    "temperature": 17.9
+  },
+  {
+    "month": "Apr",
+    "city": "北京",
+    "temperature": 13.1
+  },
+  {
+    "month": "Apr",
+    "city": "上海",
+    "temperature": 14
+  },
+  {
+    "month": "Apr",
+    "city": "广州",
+    "temperature": 21.9
+  },
+  {
+    "month": "May",
+    "city": "北京",
+    "temperature": 19.8
+  },
+  {
+    "month": "May",
+    "city": "上海",
+    "temperature": 18.8
+  },
+  {
+    "month": "May",
+    "city": "广州",
+    "temperature": 25.6
+  },
+  {
+    "month": "Jun",
+    "city": "北京",
+    "temperature": 24
+  },
+  {
+    "month": "Jun",
+    "city": "上海",
+    "temperature": 23.3
+  },
+  {
+    "month": "Jun",
+    "city": "广州",
+    "temperature": 27.2
+  },
+  {
+    "month": "Jul",
+    "city": "北京",
+    "temperature": 25.8
+  },
+  {
+    "month": "Jul",
+    "city": "上海",
+    "temperature": 27.2
+  },
+  {
+    "month": "Jul",
+    "city": "广州",
+    "temperature": 28.4
+  },
+  {
+    "month": "Aug",
+    "city": "北京",
+    "temperature": 24.4
+  },
+  {
+    "month": "Aug",
+    "city": "上海",
+    "temperature": 27.7
+  },
+  {
+    "month": "Aug",
+    "city": "广州",
+    "temperature": 28.1
+  },
+  {
+    "month": "Sep",
+    "city": "北京",
+    "temperature": 19.4
+  },
+  {
+    "month": "Sep",
+    "city": "上海",
+    "temperature": 23.6
+  },
+  {
+    "month": "Sep",
+    "city": "广州",
+    "temperature": 26.9
+  },
+  {
+    "month": "Oct",
+    "city": "北京",
+    "temperature": 12.4
+  },
+  {
+    "month": "Oct",
+    "city": "上海",
+    "temperature": 18
+  },
+  {
+    "month": "Oct",
+    "city": "广州",
+    "temperature": 23.7
+  },
+  {
+    "month": "Nov",
+    "city": "北京",
+    "temperature": 4.1
+  },
+  {
+    "month": "Nov",
+    "city": "上海",
+    "temperature": 12.3
+  },
+  {
+    "month": "Nov",
+    "city": "广州",
+    "temperature": 19.4
+  },
+  {
+    "month": "Dec",
+    "city": "北京",
+    "temperature": -2.7
+  },
+  {
+    "month": "Dec",
+    "city": "上海",
+    "temperature": 6.2
+  },
+  {
+    "month": "Dec",
+    "city": "广州",
+    "temperature": 15.2
+  }
+]

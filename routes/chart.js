@@ -15,4 +15,8 @@ module.exports = {
   'GET /chart/bar/consumption': {
     path: 'ChartController.consumption',
   },
+  // 获取每月花销
+  'GET /chart/line/getJson': {
+    path: 'ChartController.lineJson',
+  },
 };
