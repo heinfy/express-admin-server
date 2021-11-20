@@ -51,7 +51,7 @@ class RoutesService extends Define {
     } ORDER BY route.routeSort ${countStr}`;
     const sql_2 = `SELECT COUNT(id) as total FROM route ${
       filterStr ? 'WHERE ' + filterStr : filterStr
-    } ${countStr}`;
+    }`;
     try {
       let result_1 = await query(sql_1);
       let result_2 = await query(sql_2);

@@ -26,7 +26,7 @@ class usersService extends Define {
     this.SQL_USERAUTH =
       'SELECT a.authid, a.authName, a.type FROM user_role u, role_auth r, auth a WHERE u.userid = ? and u.roleid = r.roleid and r.authid = a.authid;';
     // 根据 userid 获取用户路由 菜单层级是有权限层级确定
-    this.SQL_USERROUTE = `SELECT auth.pid, auth.authid, ru.routeid, ru.routeSort ,ru.route, ru.routeName, ru.icon, ru.routeSort FROM user_role ur, role_auth r, auth, auth_route a, route ru WHERE ur.userid = ? and ur.roleid = r.roleid and r.authid = auth.authid and r.authid = a.authid and a.routeid = ru.routeid;`;
+    this.SQL_USERROUTE = `SELECT auth.pid, auth.authid, ru.routeid, ru.routeSort ,ru.route, ru.routeName, ru.icon, ru.routeSort FROM user_role ur, role_auth r, auth, auth_route a, route ru WHERE ur.userid = ? and ur.roleid = r.roleid and r.authid = auth.authid and r.authid = a.authid and a.routeid = ru.routeid ORDER BY ru.routeSort;`;
   }
   /**
    * 获取 user 列表
@@ -64,7 +64,7 @@ class usersService extends Define {
     } ${countStr}`;
     const sql_3 = `SELECT COUNT(id) as total FROM user ${
       filterStr ? 'WHERE ' + filterStr : filterStr
-    } ${countStr}`;
+    }`;
     try {
       let result_1 = await query(sql_1);
       if (result_1.length !== 0) {
@@ -120,7 +120,7 @@ class usersService extends Define {
       let params = roleids
         ? roleids.map((roleid) => [roleid, userid])
         : ['g_TpK5', userid];
-      await query(this.SQL_USER_ROLE, [[params]]);
+      await query(this.SQL_USER_ROLE, [params]);
       res.status(200).json(super._response(null));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));

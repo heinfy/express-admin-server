@@ -54,7 +54,7 @@ class AuthsService extends Define {
     } ORDER BY a.authSort ${countStr}`;
     const sql_2 = `SELECT COUNT(id) as total FROM auth a ${
       filterStr ? 'WHERE ' + filterStr : filterStr
-    } ${countStr}`;
+    }`;
     try {
       let result_1 = await query(sql_1);
       let result_2 = await query(sql_2);

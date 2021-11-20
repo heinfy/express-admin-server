@@ -58,7 +58,7 @@ class rolesService extends Define {
       } ${countStr}`;
       const sql_2 = `SELECT COUNT(id) as total FROM role ${
         filterStr ? 'WHERE ' + filterStr : filterStr
-      } ${countStr}`;
+      }`;
       let result_1 = await query(sql_1);
       let result_2 = await query(sql_2);
       let total = result_2[0]['total'];
