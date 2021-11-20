@@ -16,4 +16,7 @@ module.exports = class ChartController {
   lineJson(req, res) {
     ChartService.lineJson(req, res);
   }
+  WordCloud(req, res) {
+    ChartService.WordCloud(req, res);
+  }
 };

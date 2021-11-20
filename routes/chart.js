@@ -19,4 +19,8 @@ module.exports = {
   'GET /chart/line/getJson': {
     path: 'ChartController.lineJson',
   },
+  // 获取每月花销
+  'GET /chart/wordCloud': {
+    path: 'ChartController.WordCloud',
+  },
 };

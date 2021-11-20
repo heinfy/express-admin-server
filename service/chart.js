@@ -89,6 +89,20 @@ class ChaetService extends Define {
       res.status(200).json(super._response(null, 0, '' + error));
     }
   }
+  /**
+   * WordCloud
+   */
+  async WordCloud(req, res) {
+    try {
+      const result = await _readFile(
+        _resolve('../json', 'wordCloud.json'),
+        'utf-8'
+      );
+      res.status(200).json(super._response(JSON.parse(result)));
+    } catch (error) {
+      res.status(200).json(super._response(null, 0, '' + error));
+    }
+  }
 }
 
 module.exports = new ChaetService();
