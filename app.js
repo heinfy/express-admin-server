@@ -12,8 +12,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 配置静态资源路径
-app.use(express.static(path.join(__dirname, 'upload')));
+// 配置上传文件资源路径
+app.use('/upload', express.static(path.join(__dirname, 'upload')));
 
 router(app);
 
