@@ -10,7 +10,7 @@ const check = (req, res, next) => {
 
 const verifyAuth = (req, res, next) => {
   console.log('校验不通过的中间件 verifyAuth');
-  return res.status(214).end({
+  return res.status(400).end({
     status: false,
     message: "Sorry, you aren't authorized on facebook",
   });
