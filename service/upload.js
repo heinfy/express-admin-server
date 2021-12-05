@@ -8,10 +8,17 @@ class UploadService extends Define {
   }
   async upload(req, res) {
     try {
+      const extname = path.extname(req.files[0].originalname);
+      let path = '';
+      if (extname === '.mp4') {
+        path = '//localhost:3000/upload/7bf54251c224552921861219527e1ca4.mp4';
+      } else {
+        path = `//localhost:3000/upload/007b223e23640509ee914bcaab3c8fb5.jpeg`;
+      }
       // 删除每次上传的文件
       _deleteFile(path.join(__dirname, '../', req.files[0].path));
       const result = {
-        path: `//localhost:3000/upload/007b223e23640509ee914bcaab3c8fb5.jpeg`,
+        path,
         fileName: req.files[0].originalname,
         size: req.files[0].size,
       };
