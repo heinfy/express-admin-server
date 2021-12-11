@@ -36,6 +36,7 @@ class usersService extends Define {
       page = 1,
       size = 20,
       userid = null,
+      username = null,
       email = null,
       timeRange = null,
     } = req.body;
