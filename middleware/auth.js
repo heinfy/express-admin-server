@@ -15,9 +15,9 @@ module.exports = async (req, res, next) => {
       req.headers.userid = ret.userid;
       next();
     } catch (error) {
-      return res.status(400).json(_response(null, 0, error + ''));
+      return res.status(200).json(_response(null, -1, error + ''));
     }
   } else {
-    return res.status(400).json(_response(null, 0, '未获取 token, 请登录！'));
+    return res.status(200).json(_response(null, -1, '未获取 token, 请登录！'));
   }
 };
