@@ -45,6 +45,12 @@ class usersService extends Define {
     if (userid) {
       filterStr += `userid like '%${userid}%'`;
     }
+    if (username) {
+      filterStr +=
+        filterStr === ''
+          ? `username like '%${username}%'`
+          : `and username = '%${username}%'`;
+    }
     if (email) {
       filterStr +=
         filterStr === ''
