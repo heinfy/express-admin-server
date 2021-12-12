@@ -127,3 +127,17 @@ CREATE TABLE `auth_route` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 SET FOREIGN_KEY_CHECKS = 1;
 ```
+
+### 创建 column 表
+
+```sql
+CREATE TABLE `column` (
+  `id` int(10) unsigned unique NOT NULL AUTO_INCREMENT COMMENT '自增id',
+  `userid` varchar(30) NOT NULL COMMENT '用户id',
+  `path` varchar(100) NOT NULL COMMENT '页面路径',
+  `column` TEXT(10000) NOT NULL COMMENT '展示项',
+  `createdAt` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `updatedAt` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+SET FOREIGN_KEY_CHECKS = 1;
+```
