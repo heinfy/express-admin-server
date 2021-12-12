@@ -10,7 +10,8 @@ module.exports = async (req, res, next) => {
   const _response = new Define()._response;
   if (token) {
     try {
-      const ret = await verify(token, jwtSecret);
+      const kt = token.split('Bearer ')[1];
+      const ret = await verify(kt, jwtSecret);
       // 将 token 解析出来当前用户的 userid 挂载到 headers 上，以便接口使用
       req.headers.userid = ret.userid;
       next();

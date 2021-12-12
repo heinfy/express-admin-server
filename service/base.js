@@ -23,7 +23,7 @@ class usersService extends Define {
           expiresIn: 60 * 60 * 24, // '365d'
         }
       );
-      res.status(200).json(super._response({ token }));
+      res.status(200).json(super._response({ token: 'Bearer ' + token }));
     } catch (error) {
       res.status(200).json(super._response(null, 0, '' + error));
     }
