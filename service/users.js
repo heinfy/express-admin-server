@@ -121,12 +121,12 @@ class usersService extends Define {
         email,
         password: pwdMd5,
       };
-      // 新建用户
+      // 创建用户
       await query(this.SQL_USER, user);
       // 赋予角色 如果 roleids 不存在，则自动赋予基础角色
       let params = roleids
         ? roleids.map((roleid) => [roleid, userid])
-        : ['g_TpK5', userid];
+        : [['g_TpK5', userid]];
       await query(this.SQL_USER_ROLE, [params]);
       res.status(200).json(super._response(null));
     } catch (error) {
@@ -228,8 +228,9 @@ class usersService extends Define {
     // https://blog.csdn.net/lym152898/article/details/78246230
     let params = roleids
       ? roleids.map((roleid) => [roleid, userid])
-      : ['g_TpK5', userid];
+      : [['g_TpK5', userid]];
     try {
+      console.log('params', params);
       await query(this.SQL_USER_ROLE, [params]);
       res.status(200).json(super._response(null));
     } catch (error) {
