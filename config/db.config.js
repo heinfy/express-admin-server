@@ -15,8 +15,8 @@ const testing = {
 const production = {
   host: 'localhost',
   user: 'root',
-  password: 'houfei',
-  database: 'test',
+  password: 'Houfei123!',
+  database: 'react_admin',
 };
 
 module.exports = {

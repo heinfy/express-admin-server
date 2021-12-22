@@ -13,6 +13,7 @@
     "dev": "node ./bin/www",
     "nodemon": "nodemon --exec npm run dev",
     "start": "cross-env NODE_ENV=development npm run nodemon",
+    "start:prod": "cross-env NODE_ENV=production pm2 start ./bin/www --name express-admin-server",
     "pem": "node ./utils/node-rsa.js"
   },
   "dependencies": {
